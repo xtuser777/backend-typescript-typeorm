@@ -21,6 +21,6 @@ export class Address {
   @Column({ length: 10 })
   public code!: string;
 
-  @ManyToOne(() => City)
+  @ManyToOne(() => City, { cascade: true })
   public city!: City;
 }
