@@ -1,8 +1,16 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Person } from './Person';
 import { Level } from './Level';
 
 @Entity()
+@Unique(['login'])
 export class Employee {
   @PrimaryGeneratedColumn()
   public id!: number;
