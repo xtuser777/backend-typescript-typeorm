@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { User } from '../model/user';
 import { Request, Response } from 'express';
 
 export class TokenController {

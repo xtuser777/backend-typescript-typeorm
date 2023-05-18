@@ -1,15 +1,12 @@
-import { Repository } from 'typeorm';
 import { City } from '../entity/City';
 import { State } from '../entity/State';
 import { AppDataSource } from '../data-source';
 
 export class StateModel {
   private attributes: State;
-  private repository: Repository<State>;
 
   constructor(attributes: State = new State()) {
     this.attributes = attributes;
-    this.repository = AppDataSource.getRepository(State);
   }
 
   get id(): number {
@@ -45,19 +42,27 @@ export class StateModel {
   }
 
   async findOne(id: number) {
+    const runner = AppDataSource.createQueryRunner();
+    await runner.connect();
+
     try {
-      const entity = await this.repository.findOne({ where: { id } });
+      const entity = await runner.manager.findOne(State, { where: { id } });
 
       return entity ? new StateModel(entity) : undefined;
     } catch (e) {
       console.error(e);
       return undefined;
+    } finally {
+      await runner.release();
     }
   }
 
   async find() {
+    const runner = AppDataSource.createQueryRunner();
+    await runner.connect();
+
     try {
-      const entities = (await this.repository?.find({
+      const entities = (await runner.manager.find(State, {
         relations: {
           cities: true,
         },
@@ -73,6 +78,8 @@ export class StateModel {
     } catch (e) {
       console.error(e);
       return [];
+    } finally {
+      await runner.release();
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Person } from './Person';
+import { Level } from './Level';
 
 @Entity()
 export class Employee {
@@ -8,6 +9,12 @@ export class Employee {
 
   @Column('integer')
   public type!: number;
+
+  @Column({ length: 10 })
+  public login!: string;
+
+  @Column({ length: 100 })
+  public passwordHash!: string;
 
   @Column('date')
   public admission!: string;
@@ -18,4 +25,8 @@ export class Employee {
   @OneToOne(() => Person, { cascade: true })
   @JoinColumn()
   public person!: Person;
+
+  @OneToOne(() => Level)
+  @JoinColumn()
+  public level!: Level;
 }
