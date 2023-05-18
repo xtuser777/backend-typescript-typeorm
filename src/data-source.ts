@@ -4,6 +4,11 @@ import { State } from './entity/State';
 import { City } from './entity/City';
 import dotenv from 'dotenv';
 import { Address } from './entity/Address';
+import { Contact } from './entity/Contact';
+import { IndividualPerson } from './entity/IndividualPerson';
+import { EnterprisePerson } from './entity/EnterprisePerson';
+import { Person } from './entity/Person';
+import { Employee } from './entity/Employee';
 
 dotenv.config();
 
@@ -16,7 +21,16 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_SCHEMA,
   synchronize: true,
   logging: true,
-  entities: [State, City, Address],
+  entities: [
+    State,
+    City,
+    Address,
+    Contact,
+    IndividualPerson,
+    EnterprisePerson,
+    Person,
+    Employee,
+  ],
   migrations: [],
   subscribers: [],
 });
