@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { EmployeeModel } from '../model/EmployeeModel';
+import { IndividualPerson } from '../entity/IndividualPerson';
 
 export class TokenController {
   store = async (req: Request, res: Response) => {
@@ -22,9 +23,15 @@ export class TokenController {
     const token = jwt.sign({ id, login }, process.env.TOKEN_SECRET as string, {
       expiresIn: process.env.TOKEN_EXPIRATION,
     });
+
     return res.json({
       token,
-      user: { name: user.person.individual.name, id, login, level: user.level.id },
+      user: {
+        name: (user.person.individual as IndividualPerson).name,
+        id,
+        login,
+        level: user.level.id,
+      },
     });
   };
 }

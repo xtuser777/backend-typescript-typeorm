@@ -15,7 +15,7 @@ export class Contact {
   @Column({ length: 100 })
   public email!: string;
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, { cascade: true })
   @JoinColumn()
   public address!: Address;
 }

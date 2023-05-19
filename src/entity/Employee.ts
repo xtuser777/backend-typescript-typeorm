@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -34,7 +35,6 @@ export class Employee {
   @JoinColumn()
   public person!: Person;
 
-  @OneToOne(() => Level)
-  @JoinColumn()
+  @ManyToOne(() => Level)
   public level!: Level;
 }

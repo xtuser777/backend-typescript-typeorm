@@ -12,9 +12,9 @@ export class Person {
 
   @OneToOne(() => IndividualPerson, { cascade: true, nullable: true })
   @JoinColumn()
-  public individual!: IndividualPerson;
+  public individual?: IndividualPerson;
 
   @OneToOne(() => EnterprisePerson, { cascade: true, nullable: true })
   @JoinColumn()
-  public enterprise!: EnterprisePerson;
+  public enterprise?: EnterprisePerson;
 }

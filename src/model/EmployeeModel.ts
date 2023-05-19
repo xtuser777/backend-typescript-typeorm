@@ -4,6 +4,7 @@ import { Level } from '../entity/Level';
 import { Person } from '../entity/Person';
 import bcryptjs from 'bcryptjs';
 import { QueryRunner, TypeORMError } from 'typeorm';
+import { IndividualPerson } from '../entity/IndividualPerson';
 
 export class EmployeeModel {
   private attributes: Employee;
@@ -92,9 +93,9 @@ export class EmployeeModel {
     if (
       this.attributes.id != 0 ||
       this.attributes.person.id != 0 ||
-      this.attributes.person.individual.id != 0 ||
-      this.attributes.person.individual.contact.id != 0 ||
-      this.attributes.person.individual.contact.address.id != 0
+      (this.attributes.person.individual as IndividualPerson).id != 0 ||
+      (this.attributes.person.individual as IndividualPerson).contact.id != 0 ||
+      (this.attributes.person.individual as IndividualPerson).contact.address.id != 0
     )
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
@@ -107,32 +108,49 @@ export class EmployeeModel {
 
     if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
       return 'tipo de pessoa inválido';
-    if (this.attributes.person.individual.name.length < 5)
+    if ((this.attributes.person.individual as IndividualPerson).name.length < 5)
       return 'nome do funcionário inválido.';
-    if (this.attributes.person.individual.cpf.length < 14)
+    if ((this.attributes.person.individual as IndividualPerson).cpf.length < 14)
       return 'cpf do funcionário inválido.';
-    if (this.attributes.person.individual.birth.length < 10)
+    if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if (this.attributes.person.individual.contact.phone.length < 14)
+    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (this.attributes.person.individual.contact.cellphone.length < 15)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
+      15
+    )
       return 'celular do funcionário inválido.';
     if (
-      this.attributes.person.individual.contact.email.length < 5 ||
-      !isEmail(this.attributes.person.individual.contact.email)
+      (this.attributes.person.individual as IndividualPerson).contact.email.length < 5 ||
+      !isEmail((this.attributes.person.individual as IndividualPerson).contact.email)
     )
       return 'e-mail inválido.';
 
-    if (this.attributes.person.individual.contact.address.street.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.street
+        .length <= 0
+    )
       return 'rua inválida';
-    if (this.attributes.person.individual.contact.address.number.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.number
+        .length <= 0
+    )
       return 'número inválido';
-    if (this.attributes.person.individual.contact.address.neighborhood.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
+        .length <= 0
+    )
       return 'bairro ou distrito inválido.';
-    if (this.attributes.person.individual.contact.address.code.length < 10)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.code
+        .length < 10
+    )
       return 'cep inválido';
-    if (this.attributes.person.individual.contact.address.city.id <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
+    )
       return 'cidade inválida';
 
     if (this._password)
@@ -143,6 +161,8 @@ export class EmployeeModel {
       return response ? '' : 'erro ao inserir o funcionário';
     } catch (e) {
       console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
       return (e as TypeORMError).message;
     }
   }
@@ -151,9 +171,9 @@ export class EmployeeModel {
     if (
       this.attributes.id == 0 ||
       this.attributes.person.id == 0 ||
-      this.attributes.person.individual.id == 0 ||
-      this.attributes.person.individual.contact.id == 0 ||
-      this.attributes.person.individual.contact.address.id == 0
+      (this.attributes.person.individual as IndividualPerson).id == 0 ||
+      (this.attributes.person.individual as IndividualPerson).contact.id == 0 ||
+      (this.attributes.person.individual as IndividualPerson).contact.address.id == 0
     )
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
@@ -164,32 +184,49 @@ export class EmployeeModel {
 
     if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
       return 'tipo de pessoa inválido';
-    if (this.attributes.person.individual.name.length < 5)
+    if ((this.attributes.person.individual as IndividualPerson).name.length < 5)
       return 'nome do funcionário inválido.';
-    if (this.attributes.person.individual.cpf.length < 14)
+    if ((this.attributes.person.individual as IndividualPerson).cpf.length < 14)
       return 'cpf do funcionário inválido.';
-    if (this.attributes.person.individual.birth.length < 10)
+    if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if (this.attributes.person.individual.contact.phone.length < 14)
+    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (this.attributes.person.individual.contact.cellphone.length < 15)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
+      15
+    )
       return 'celular do funcionário inválido.';
     if (
-      this.attributes.person.individual.contact.email.length < 5 ||
-      !isEmail(this.attributes.person.individual.contact.email)
+      (this.attributes.person.individual as IndividualPerson).contact.email.length < 5 ||
+      !isEmail((this.attributes.person.individual as IndividualPerson).contact.email)
     )
       return 'e-mail inválido.';
 
-    if (this.attributes.person.individual.contact.address.street.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.street
+        .length <= 0
+    )
       return 'rua inválida';
-    if (this.attributes.person.individual.contact.address.number.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.number
+        .length <= 0
+    )
       return 'número inválido';
-    if (this.attributes.person.individual.contact.address.neighborhood.length <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
+        .length <= 0
+    )
       return 'bairro ou distrito inválido.';
-    if (this.attributes.person.individual.contact.address.code.length < 10)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.code
+        .length < 10
+    )
       return 'cep inválido';
-    if (this.attributes.person.individual.contact.address.city.id <= 0)
+    if (
+      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
+    )
       return 'cidade inválida';
 
     if (this._password)
@@ -200,6 +237,8 @@ export class EmployeeModel {
       return response ? '' : 'erro ao atualizar o funcionário';
     } catch (e) {
       console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
       return (e as TypeORMError).message;
     }
   }
@@ -213,6 +252,8 @@ export class EmployeeModel {
       return response ? '' : 'erro ao remover o funcionário.';
     } catch (e) {
       console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
       return (e as TypeORMError).message;
     }
   }
@@ -221,11 +262,19 @@ export class EmployeeModel {
     if (id <= 0) return undefined;
 
     try {
-      const entity = await runner.manager.findOne(Employee, { where: { id } });
+      const entity = await runner.manager.findOne(Employee, {
+        relations: {
+          level: true,
+          person: { individual: { contact: { address: { city: { state: true } } } } },
+        },
+        where: { id },
+      });
 
       return entity ? new EmployeeModel(entity) : undefined;
     } catch (e) {
       console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
       return undefined;
     }
   }
@@ -233,7 +282,10 @@ export class EmployeeModel {
   async find(runner: QueryRunner, params?: { login: string; demission?: string }) {
     try {
       const entities = await runner.manager.find(Employee, {
-        relations: { person: true, level: true },
+        relations: {
+          level: true,
+          person: { individual: { contact: { address: { city: { state: true } } } } },
+        },
         where: params,
       });
       const employees: EmployeeModel[] = [];
@@ -244,6 +296,8 @@ export class EmployeeModel {
       return employees;
     } catch (e) {
       console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
       return [];
     }
   }

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { CityModel } from '../model/CityModel';
-import { City } from '../entity/City';
 
 export class CityController {
   index = async (req: Request, res: Response): Promise<Response> => {

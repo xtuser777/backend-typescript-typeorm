@@ -7,6 +7,8 @@ import express from 'express';
 import city from './routes/city';
 import state from './routes/state';
 import token from './routes/token';
+import level from './routes/level';
+import employee from './routes/employee';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -49,6 +51,8 @@ class App {
     this.app.use('/state', state);
     this.app.use('/city', city);
     this.app.use('/token', token);
+    this.app.use('/employee', employee);
+    this.app.use('/level', level);
   }
 }
 
