@@ -5,7 +5,7 @@ import { Person } from './Person';
 export class Client {
   @PrimaryGeneratedColumn()
   public id!: number;
-  
+
   @Column({ length: 10 })
   public register!: string;
 
