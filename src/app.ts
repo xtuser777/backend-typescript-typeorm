@@ -9,6 +9,7 @@ import state from './routes/state';
 import token from './routes/token';
 import level from './routes/level';
 import employee from './routes/employee';
+import parameterization from './routes/parameterization';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -53,6 +54,7 @@ class App {
     this.app.use('/token', token);
     this.app.use('/employee', employee);
     this.app.use('/level', level);
+    this.app.use('/parameterization', parameterization);
   }
 }
 

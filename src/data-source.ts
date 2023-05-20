@@ -10,6 +10,7 @@ import { EnterprisePerson } from './entity/EnterprisePerson';
 import { Person } from './entity/Person';
 import { Employee } from './entity/Employee';
 import { Level } from './entity/Level';
+import { Parameterization } from './entity/Parameterization';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ export const AppDataSource = new DataSource({
     Person,
     Level,
     Employee,
+    Parameterization,
   ],
   migrations: [],
   subscribers: [],
