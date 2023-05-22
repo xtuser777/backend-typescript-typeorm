@@ -12,6 +12,8 @@ import { Employee } from './entity/Employee';
 import { Level } from './entity/Level';
 import { Parameterization } from './entity/Parameterization';
 import { Client } from './entity/Client';
+import { BankData } from './entity/BankData';
+import { Driver } from './entity/Driver';
 
 dotenv.config();
 
@@ -36,6 +38,8 @@ export const AppDataSource = new DataSource({
     Employee,
     Parameterization,
     Client,
+    BankData,
+    Driver,
   ],
   migrations: [],
   subscribers: [],

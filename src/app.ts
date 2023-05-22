@@ -11,6 +11,7 @@ import level from './routes/level';
 import employee from './routes/employee';
 import parameterization from './routes/parameterization';
 import client from './routes/client';
+import driver from './routes/driver';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -57,6 +58,7 @@ class App {
     this.app.use('/level', level);
     this.app.use('/parameterization', parameterization);
     this.app.use('/client', client);
+    this.app.use('/driver', driver);
   }
 }
 
