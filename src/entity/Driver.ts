@@ -5,7 +5,8 @@ import {
   OneToOne, 
   JoinColumn 
 } from 'typeorm';
-import { BankData } from '../entity/BankData';
+import { Person } from './Person';
+import { BankData } from './BankData';
 
 @Entity()
 export class Driver {
