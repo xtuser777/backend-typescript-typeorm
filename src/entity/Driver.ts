@@ -1,10 +1,4 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  OneToOne, 
-  JoinColumn 
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { Person } from './Person';
 import { BankData } from './BankData';
 

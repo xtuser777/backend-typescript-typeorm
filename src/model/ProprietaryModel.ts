@@ -1,17 +1,18 @@
 import { QueryRunner, TypeORMError } from 'typeorm';
-import isEmail from 'validator/lib/isEmail';
-import { Client } from '../entity/Client';
+import { Driver } from '../entity/Driver';
 import { Person } from '../entity/Person';
+import { Proprietary } from '../entity/Proprietary';
 import { IndividualPerson } from '../entity/IndividualPerson';
 import { EnterprisePerson } from '../entity/EnterprisePerson';
+import isEmail from 'validator/lib/isEmail';
 
-export class ClientModel {
-  private attributes: Client;
+export class ProprietaryModel {
+  private attributes: Proprietary;
 
-  constructor(attributes?: Client) {
+  constructor(attributes: Proprietary) {
     this.attributes = attributes
       ? attributes
-      : { id: 0, register: '', person: new Person() };
+      : { id: 0, register: '', driver: new Driver(), person: new Person() };
   }
 
   get id(): number {
@@ -28,6 +29,13 @@ export class ClientModel {
     this.attributes.register = v;
   }
 
+  get driver(): Driver | undefined {
+    return this.attributes.driver;
+  }
+  set driver(v: Driver | undefined) {
+    this.attributes.driver = v;
+  }
+
   get person(): Person {
     return this.attributes.person;
   }
@@ -35,7 +43,7 @@ export class ClientModel {
     this.attributes.person = v;
   }
 
-  get toAttributes(): Client {
+  get toAttributes(): Proprietary {
     return this.attributes;
   }
 
@@ -47,9 +55,8 @@ export class ClientModel {
         ? (this.attributes.person.individual as IndividualPerson).id != 0
         : (this.attributes.person.enterprise as EnterprisePerson).id != 0)
     )
-      return 'metodo invalido.';
-
-    if (this.attributes.register.length < 10) return 'data de cadastro invalida';
+      return 'metodo incorreto;';
+    if (this.attributes.register.length < 10) return 'data de cadastro invalida.';
 
     if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
       return 'tipo de pessoa invalido';
@@ -148,8 +155,8 @@ export class ClientModel {
     }
 
     try {
-      const response = await runner.manager.save(Client, this.attributes);
-      return response ? '' : 'erro ao inserir o cliente';
+      const response = await runner.manager.save(Proprietary, this.attributes);
+      return response ? '' : 'erro ao inserir o proprietario';
     } catch (e) {
       console.error(e);
       await runner.rollbackTransaction();
@@ -166,8 +173,11 @@ export class ClientModel {
         ? (this.attributes.person.individual as IndividualPerson).id <= 0
         : (this.attributes.person.enterprise as EnterprisePerson).id <= 0)
     )
-      return 'metodo invalido.';
+      return 'metodo incorreto;';
+    if (this.attributes.register.length < 10) return 'data de cadastro invalida.';
 
+    if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
+      return 'tipo de pessoa invalido';
     if (this.attributes.person.type == 1) {
       if ((this.attributes.person.individual as IndividualPerson).name.length < 3)
         return 'nome invalido.';
@@ -263,8 +273,8 @@ export class ClientModel {
     }
 
     try {
-      const response = await runner.manager.save(Client, this.attributes);
-      return response ? '' : 'erro ao atualizar o cliente';
+      const response = await runner.manager.save(Proprietary, this.attributes);
+      return response ? '' : 'erro ao atualizar o proprietario';
     } catch (e) {
       console.error(e);
       await runner.rollbackTransaction();
@@ -279,7 +289,7 @@ export class ClientModel {
     try {
       const response = await runner.manager.remove(this.attributes);
 
-      return response ? '' : 'erro ao remover o cliente.';
+      return response ? '' : 'erro ao remover o proprietary.';
     } catch (e) {
       console.error(e);
       await runner.rollbackTransaction();
@@ -292,9 +302,12 @@ export class ClientModel {
     if (id <= 0) return undefined;
 
     try {
-      const entity = await runner.manager.findOne(Client, {
+      const entity = await runner.manager.findOne(Proprietary, {
         where: { id },
         relations: {
+          driver: {
+            person: { individual: { contact: { address: { city: { state: true } } } } },
+          },
           person: {
             individual: { contact: { address: { city: { state: true } } } },
             enterprise: { contact: { address: { city: { state: true } } } },
@@ -302,7 +315,7 @@ export class ClientModel {
         },
       });
 
-      return entity ? new ClientModel(entity) : undefined;
+      return entity ? new ProprietaryModel(entity) : undefined;
     } catch (e) {
       console.error(e);
       await runner.rollbackTransaction();
@@ -313,18 +326,21 @@ export class ClientModel {
 
   async find(runner: QueryRunner) {
     try {
-      const entities = await runner.manager.find(Client, {
+      const entities = await runner.manager.find(Proprietary, {
         relations: {
+          driver: {
+            person: { individual: { contact: { address: { city: { state: true } } } } },
+          },
           person: {
             individual: { contact: { address: { city: { state: true } } } },
             enterprise: { contact: { address: { city: { state: true } } } },
           },
         },
       });
-      const clients: ClientModel[] = [];
-      for (const entity of entities) clients.push(new ClientModel(entity));
+      const proprietaries: ProprietaryModel[] = [];
+      for (const entity of entities) proprietaries.push(new ProprietaryModel(entity));
 
-      return clients;
+      return proprietaries;
     } catch (e) {
       console.error(e);
       await runner.rollbackTransaction();
