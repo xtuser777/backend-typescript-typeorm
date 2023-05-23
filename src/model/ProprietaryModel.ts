@@ -9,7 +9,7 @@ import isEmail from 'validator/lib/isEmail';
 export class ProprietaryModel {
   private attributes: Proprietary;
 
-  constructor(attributes: Proprietary) {
+  constructor(attributes?: Proprietary) {
     this.attributes = attributes
       ? attributes
       : { id: 0, register: '', driver: new Driver(), person: new Person() };
@@ -318,7 +318,6 @@ export class ProprietaryModel {
       return entity ? new ProprietaryModel(entity) : undefined;
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
       await runner.release();
       return undefined;
     }
@@ -343,7 +342,6 @@ export class ProprietaryModel {
       return proprietaries;
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
       await runner.release();
       return [];
     }

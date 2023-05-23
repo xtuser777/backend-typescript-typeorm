@@ -14,6 +14,7 @@ import { Parameterization } from './entity/Parameterization';
 import { Client } from './entity/Client';
 import { BankData } from './entity/BankData';
 import { Driver } from './entity/Driver';
+import { Proprietary } from './entity/Proprietary';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ export const AppDataSource = new DataSource({
     Client,
     BankData,
     Driver,
+    Proprietary,
   ],
   migrations: [],
   subscribers: [],
