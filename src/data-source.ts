@@ -15,6 +15,8 @@ import { Client } from './entity/Client';
 import { BankData } from './entity/BankData';
 import { Driver } from './entity/Driver';
 import { Proprietary } from './entity/Proprietary';
+import { TruckType } from './entity/TruckType';
+import { Truck } from './entity/Truck';
 
 dotenv.config();
 
@@ -42,6 +44,8 @@ export const AppDataSource = new DataSource({
     BankData,
     Driver,
     Proprietary,
+    TruckType,
+    Truck,
   ],
   migrations: [],
   subscribers: [],
