@@ -57,7 +57,6 @@ export class ClientController {
         ? {
             id: 0,
             ...req.body.person,
-            contact,
           }
         : undefined;
     const person: Person = {
@@ -65,6 +64,7 @@ export class ClientController {
       type: req.body.person.type,
       individual: req.body.person.type == 1 ? individual : undefined,
       enterprise: req.body.person.type == 2 ? enterprise : undefined,
+      contact,
     };
     const client: Client = { id: 0, ...req.body.client, person };
 
@@ -95,36 +95,37 @@ export class ClientController {
     } catch {
       return res.status(400).json('parametro invalido.');
     }
-    const city = (await new CityModel().findOne(req.body.address.city))?.toAttributes;
+    const city = ((await new CityModel().findOne(req.body.address.city)) as CityModel)
+      .toAttributes;
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const client = (await new ClientModel().findOne(runner, id)) as ClientModel;
-    let attributes = client?.toAttributes as Client;
-    let address =
-      attributes.person.type == 1
-        ? (attributes.person.individual as IndividualPerson).contact.address
-        : (attributes.person.enterprise as EnterprisePerson).contact.address;
-    let contact =
-      attributes.person.type == 1
-        ? (attributes.person.individual as IndividualPerson).contact
-        : (attributes.person.enterprise as EnterprisePerson).contact;
-    let individual = attributes.person.individual;
-    let enterprise = attributes.person.enterprise;
-    const person = attributes.person;
-    address = { id: address.id, ...req.body.address, city };
-    contact = { id: contact.id, ...req.body.contact, address };
-    individual = individual
-      ? { id: individual.id, ...req.body.person, contact }
-      : undefined;
-    enterprise = enterprise
-      ? { id: enterprise.id, ...req.body.person, contact }
-      : undefined;
-    person.individual = individual;
-    person.enterprise = enterprise;
-    attributes = {
-      ...req.body.client,
-      person,
-    };
+    client.toAttributes.register = req.body.client.register;
+    client.toAttributes.person.contact.phone = req.body.contact.phone;
+    client.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
+    client.toAttributes.person.contact.email = req.body.contact.email;
+    client.toAttributes.person.contact.address.street = req.body.address.street;
+    client.toAttributes.person.contact.address.number = req.body.address.number;
+    client.toAttributes.person.contact.address.neighborhood =
+      req.body.address.neighborhood;
+    client.toAttributes.person.contact.address.complement = req.body.address.complement;
+    client.toAttributes.person.contact.address.code = req.body.address.code;
+    client.toAttributes.person.contact.address.city = city;
+    if (client.toAttributes.person.type == 1) {
+      (client.toAttributes.person.individual as IndividualPerson).name =
+        req.body.person.name;
+      (client.toAttributes.person.individual as IndividualPerson).cpf =
+        req.body.person.cpf;
+      (client.toAttributes.person.individual as IndividualPerson).birth =
+        req.body.person.birth;
+    } else {
+      (client.toAttributes.person.enterprise as EnterprisePerson).corporateName =
+        req.body.person.corporateName;
+      (client.toAttributes.person.enterprise as EnterprisePerson).fantasyName =
+        req.body.person.fantasyName;
+      (client.toAttributes.person.enterprise as EnterprisePerson).cnpj =
+        req.body.person.cnpj;
+    }
 
     await runner.startTransaction();
     const response = await client.update(runner);

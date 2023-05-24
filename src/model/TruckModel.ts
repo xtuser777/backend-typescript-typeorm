@@ -165,11 +165,15 @@ export class TruckModel {
           type: true,
           proprietary: {
             driver: {
-              person: { individual: { contact: { address: { city: { state: true } } } } },
+              person: {
+                individual: true,
+                contact: { address: { city: { state: true } } },
+              },
             },
             person: {
-              individual: { contact: { address: { city: { state: true } } } },
-              enterprise: { contact: { address: { city: { state: true } } } },
+              individual: true,
+              enterprise: true,
+              contact: { address: { city: { state: true } } },
             },
           },
         },
@@ -191,11 +195,15 @@ export class TruckModel {
           type: true,
           proprietary: {
             driver: {
-              person: { individual: { contact: { address: { city: { state: true } } } } },
+              person: {
+                individual: true,
+                contact: { address: { city: { state: true } } },
+              },
             },
             person: {
-              individual: { contact: { address: { city: { state: true } } } },
-              enterprise: { contact: { address: { city: { state: true } } } },
+              individual: true,
+              enterprise: true,
+              contact: { address: { city: { state: true } } },
             },
           },
         },

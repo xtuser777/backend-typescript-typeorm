@@ -44,8 +44,8 @@ export class DriverController {
       .toAttributes;
     const address: Address = { id: 0, ...req.body.address, city };
     const contact: Contact = { id: 0, ...req.body.contact, address };
-    const individual: IndividualPerson = { id: 0, ...req.body.person, contact };
-    const person: Person = { id: 0, type: 1, individual, enterprise: undefined };
+    const individual: IndividualPerson = { id: 0, ...req.body.person };
+    const person: Person = { id: 0, type: 1, individual, enterprise: undefined, contact };
     const bank: BankData = { id: 0, ...req.body.bank };
     const driver: Driver = { id: 0, ...req.body.driver, person, bankData: bank };
 
@@ -76,26 +76,33 @@ export class DriverController {
     } catch {
       return res.status(400).json('parametro invalido.');
     }
-    const city = (await new CityModel().findOne(req.body.address.city))?.toAttributes;
+    const city = ((await new CityModel().findOne(req.body.address.city)) as CityModel)
+      .toAttributes;
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const driver = (await new DriverModel().findOne(runner, id)) as DriverModel;
-    let attributes = driver?.toAttributes as Driver;
-    let address = (attributes.person.individual as IndividualPerson).contact.address;
-    let contact = (attributes.person.individual as IndividualPerson).contact;
-    let individual = attributes.person.individual as IndividualPerson;
-    const person = attributes.person;
-    let bankData = attributes.bankData;
-    address = { id: address.id, ...req.body.address, city };
-    contact = { id: contact.id, ...req.body.contact, address };
-    individual = { id: individual.id, ...req.body.person, contact };
-    person.individual = individual;
-    bankData = { id: bankData.id, ...req.body.bank };
-    attributes = {
-      ...req.body.driver,
-      person,
-      bankData,
-    };
+    driver.register = req.body.driver.register;
+    driver.cnh = req.body.driver.cnh;
+
+    driver.person.contact.phone = req.body.contact.phone;
+    driver.person.contact.cellphone = req.body.contact.cellphone;
+    driver.person.contact.email = req.body.contact.email;
+
+    driver.person.contact.address.street = req.body.adress.street;
+    driver.person.contact.address.number = req.body.address.number;
+    driver.person.contact.address.neighborhood = req.body.address.neighborhood;
+    driver.person.contact.address.complement = req.body.address.complement;
+    driver.person.contact.address.code = req.body.address.code;
+    driver.person.contact.address.city = city;
+
+    (driver.person.individual as IndividualPerson).name = req.body.person.name;
+    (driver.person.individual as IndividualPerson).cpf = req.body.person.cpf;
+    (driver.person.individual as IndividualPerson).birth = req.body.person.birth;
+
+    driver.bankData.bank = req.body.bank.bank;
+    driver.bankData.agency = req.body.bank.agency;
+    driver.bankData.account = req.body.bank.account;
+    driver.bankData.type = req.body.bank.type;
 
     await runner.startTransaction();
     const response = await driver.update(runner);

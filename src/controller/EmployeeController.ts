@@ -80,7 +80,8 @@ export class EmployeeController {
     } catch {
       return res.status(400).json('parametro invalido.');
     }
-    const city = (await new CityModel().findOne(req.body.address.city))?.toAttributes;
+    const city = ((await new CityModel().findOne(req.body.address.city)) as CityModel)
+      .toAttributes;
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const employee = (await new EmployeeModel().findOne(runner, id)) as EmployeeModel;
@@ -103,6 +104,15 @@ export class EmployeeController {
       req.body.person.birth;
     employee.toAttributes.person.contact.phone = req.body.contact.phone;
     employee.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
+    employee.toAttributes.person.contact.email = req.body.contact.email;
+    employee.toAttributes.person.contact.address.street = req.body.address.street;
+    employee.toAttributes.person.contact.address.number = req.body.address.number;
+    employee.toAttributes.person.contact.address.neighborhood =
+      req.body.address.neighborhood;
+    employee.toAttributes.person.contact.address.complement = req.body.address.complement;
+    employee.toAttributes.person.contact.address.code = req.body.address.code;
+    employee.toAttributes.person.contact.address.city = city;
+    employee.toAttributes.level = level;
 
     (employee as EmployeeModel).password = req.body.employee.password;
 

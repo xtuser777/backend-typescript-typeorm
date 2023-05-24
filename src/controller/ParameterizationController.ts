@@ -25,8 +25,8 @@ export class ParameterizationController {
       .toAttributes;
     const address: Address = { id: 0, ...req.body.address, city };
     const contact: Contact = { id: 0, ...req.body.contact, address };
-    const enterprise: EnterprisePerson = { id: 0, ...req.body.person, contact };
-    const person: Person = { id: 0, type: 2, individual: undefined, enterprise };
+    const enterprise: EnterprisePerson = { id: 0, ...req.body.person };
+    const person: Person = { id: 0, type: 2, individual: undefined, enterprise, contact };
     const parameterization: Parameterization = {
       id: 1,
       ...req.body.parameterization,
@@ -53,25 +53,31 @@ export class ParameterizationController {
   async update(req: Request, res: Response) {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('requisicao sem corpo.');
-    const city = (await new CityModel().findOne(req.body.address.city))?.toAttributes;
+    const city = ((await new CityModel().findOne(req.body.address.city)) as CityModel)
+      .toAttributes;
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const parameterization = (await new ParameterizationModel().findOne(
       runner,
     )) as ParameterizationModel;
-    let attributes = parameterization?.toAttributes as Parameterization;
-    let address = (attributes.person.enterprise as EnterprisePerson).contact.address;
-    let contact = (attributes.person.enterprise as EnterprisePerson).contact;
-    let enterprise = attributes.person.enterprise as EnterprisePerson;
-    const person = attributes.person;
-    address = { id: address.id, ...req.body.address, city };
-    contact = { id: contact.id, ...req.body.contact, address };
-    enterprise = { id: enterprise.id, ...req.body.person, contact };
-    person.enterprise = enterprise;
-    attributes = {
-      ...req.body.parameterization,
-      person,
-    };
+    parameterization.toAttributes.logotype = req.body.parameterization.logotype;
+    parameterization.toAttributes.person.contact.phone = req.body.contact.phone;
+    parameterization.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
+    parameterization.toAttributes.person.contact.email = req.body.contact.email;
+    parameterization.toAttributes.person.contact.address.street = req.body.address.street;
+    parameterization.toAttributes.person.contact.address.number = req.body.address.number;
+    parameterization.toAttributes.person.contact.address.neighborhood =
+      req.body.address.neighborhood;
+    parameterization.toAttributes.person.contact.address.complement =
+      req.body.address.complement;
+    parameterization.toAttributes.person.contact.address.code = req.body.address.code;
+    parameterization.toAttributes.person.contact.address.city = city;
+    (parameterization.toAttributes.person.enterprise as EnterprisePerson).corporateName =
+      req.body.person.corporateName;
+    (parameterization.toAttributes.person.enterprise as EnterprisePerson).fantasyName =
+      req.body.person.fantasyName;
+    (parameterization.toAttributes.person.enterprise as EnterprisePerson).cnpj =
+      req.body.person.cnpj;
 
     await runner.startTransaction();
     const response = await parameterization.update(runner);

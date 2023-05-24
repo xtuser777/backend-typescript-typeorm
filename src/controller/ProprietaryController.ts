@@ -8,7 +8,6 @@ import { IndividualPerson } from '../entity/IndividualPerson';
 import { EnterprisePerson } from '../entity/EnterprisePerson';
 import { Person } from '../entity/Person';
 import { Proprietary } from '../entity/Proprietary';
-import { Driver } from '../entity/Driver';
 import { DriverModel } from '../model/DriverModel';
 
 export class ProprietaryController {
@@ -51,7 +50,6 @@ export class ProprietaryController {
         ? {
             id: 0,
             ...req.body.person,
-            contact,
           }
         : undefined;
     const enterprise: EnterprisePerson | undefined =
@@ -59,7 +57,6 @@ export class ProprietaryController {
         ? {
             id: 0,
             ...req.body.person,
-            contact,
           }
         : undefined;
     const person: Person = {
@@ -67,6 +64,7 @@ export class ProprietaryController {
       type: req.body.person.type,
       individual: req.body.person.type == 1 ? individual : undefined,
       enterprise: req.body.person.type == 2 ? enterprise : undefined,
+      contact,
     };
     const proprietary: Proprietary = { id: 0, ...req.body.prop, person };
 
@@ -104,43 +102,44 @@ export class ProprietaryController {
     } catch {
       return res.status(400).json('parametro invalido.');
     }
-    const city = (await new CityModel().findOne(req.body.address.city))?.toAttributes;
+    const city = ((await new CityModel().findOne(req.body.address.city)) as CityModel)
+      .toAttributes;
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const proprietary = (await new ProprietaryModel().findOne(
       runner,
       id,
     )) as ProprietaryModel;
-    let attributes = proprietary?.toAttributes as Proprietary;
-    let address =
-      attributes.person.type == 1
-        ? (attributes.person.individual as IndividualPerson).contact.address
-        : (attributes.person.enterprise as EnterprisePerson).contact.address;
-    let contact =
-      attributes.person.type == 1
-        ? (attributes.person.individual as IndividualPerson).contact
-        : (attributes.person.enterprise as EnterprisePerson).contact;
-    let individual = attributes.person.individual;
-    let enterprise = attributes.person.enterprise;
-    const person = attributes.person;
-    address = { id: address.id, ...req.body.address, city };
-    contact = { id: contact.id, ...req.body.contact, address };
-    individual = individual
-      ? { id: individual.id, ...req.body.person, contact }
-      : undefined;
-    enterprise = enterprise
-      ? { id: enterprise.id, ...req.body.person, contact }
-      : undefined;
-    person.individual = individual;
-    person.enterprise = enterprise;
     const driver = req.body.prop.driver
       ? await new DriverModel().findOne(runner, req.body.prop.driver)
       : undefined;
-    attributes = {
-      ...req.body.proprietary,
-      driver,
-      person,
-    };
+    proprietary.toAttributes.register = req.body.prop.register;
+    proprietary.toAttributes.person.contact.phone = req.body.contact.phone;
+    proprietary.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
+    proprietary.toAttributes.person.contact.email = req.body.contact.email;
+    proprietary.toAttributes.person.contact.address.street = req.body.address.street;
+    proprietary.toAttributes.person.contact.address.number = req.body.address.number;
+    proprietary.toAttributes.person.contact.address.neighborhood =
+      req.body.address.neighborhood;
+    proprietary.toAttributes.person.contact.address.complement =
+      req.body.address.complement;
+    proprietary.toAttributes.person.contact.address.code = req.body.address.code;
+    proprietary.toAttributes.person.contact.address.city = city;
+    if (proprietary.toAttributes.person.type == 1) {
+      (proprietary.toAttributes.person.individual as IndividualPerson).name =
+        req.body.person.name;
+      (proprietary.toAttributes.person.individual as IndividualPerson).cpf =
+        req.body.person.cpf;
+      (proprietary.toAttributes.person.individual as IndividualPerson).birth =
+        req.body.person.birth;
+    } else {
+      (proprietary.toAttributes.person.enterprise as EnterprisePerson).corporateName =
+        req.body.person.corporateName;
+      (proprietary.toAttributes.person.enterprise as EnterprisePerson).fantasyName =
+        req.body.person.fantasyName;
+      (proprietary.toAttributes.person.enterprise as EnterprisePerson).cnpj =
+        req.body.person.cnpj;
+    }
 
     await runner.startTransaction();
     const response = await proprietary.update(runner);
