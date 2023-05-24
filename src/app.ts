@@ -13,6 +13,8 @@ import parameterization from './routes/parameterization';
 import client from './routes/client';
 import driver from './routes/driver';
 import proprietary from './routes/proprietary';
+import type from './routes/truck-type';
+import truck from './routes/truck';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -61,6 +63,8 @@ class App {
     this.app.use('/client', client);
     this.app.use('/driver', driver);
     this.app.use('/proprietary', proprietary);
+    this.app.use('/type', type);
+    this.app.use('/truck', truck);
   }
 }
 

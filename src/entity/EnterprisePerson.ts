@@ -1,5 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Contact } from './Contact';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class EnterprisePerson {
@@ -14,8 +13,4 @@ export class EnterprisePerson {
 
   @Column({ length: 19 })
   public cnpj!: string;
-
-  @OneToOne(() => Contact, { cascade: true })
-  @JoinColumn()
-  public contact!: Contact;
 }

@@ -72,40 +72,17 @@ export class DriverModel {
     if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de nascimento invalida.';
 
-    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
-      return 'telefone invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
-      15
-    )
-      return 'celular invalido.';
-    if (!isEmail((this.attributes.person.individual as IndividualPerson).contact.email))
-      return 'e-mail invalido.';
+    if (this.attributes.person.contact.phone.length < 14) return 'telefone invalido.';
+    if (this.attributes.person.contact.cellphone.length < 15) return 'celular invalido.';
+    if (!isEmail(this.attributes.person.contact.email)) return 'e-mail invalido.';
 
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua invalida.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua invalida.';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'numero do endereco invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.code
-        .length < 10
-    )
-      return 'cep invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
-    )
-      return 'cidade invalida.';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep invalido.';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade invalida.';
 
     try {
       const response = await runner.manager.save(Driver, this.attributes);
@@ -136,40 +113,17 @@ export class DriverModel {
     if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de cadastro invalida.';
 
-    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
-      return 'telefone invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
-      15
-    )
-      return 'celular invalido.';
-    if (!isEmail((this.attributes.person.individual as IndividualPerson).contact.email))
-      return 'e-mail invalido.';
+    if (this.attributes.person.contact.phone.length < 14) return 'telefone invalido.';
+    if (this.attributes.person.contact.cellphone.length < 15) return 'celular invalido.';
+    if (!isEmail(this.attributes.person.contact.email)) return 'e-mail invalido.';
 
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua invalida.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua invalida.';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'numero do endereco invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.code
-        .length < 10
-    )
-      return 'cep invalido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
-    )
-      return 'cidade invalida.';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep invalido.';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade invalida.';
 
     try {
       const response = await runner.manager.save(Driver, this.attributes);
@@ -205,8 +159,9 @@ export class DriverModel {
         where: { id },
         relations: {
           person: {
-            individual: { contact: { address: { city: { state: true } } } },
-            enterprise: { contact: { address: { city: { state: true } } } },
+            individual: true,
+            enterprise: true,
+            contact: { address: { city: { state: true } } },
           },
           bankData: true,
         },
@@ -226,8 +181,9 @@ export class DriverModel {
       const entities = await runner.manager.find(Driver, {
         relations: {
           person: {
-            individual: { contact: { address: { city: { state: true } } } },
-            enterprise: { contact: { address: { city: { state: true } } } },
+            individual: true,
+            enterprise: true,
+            contact: { address: { city: { state: true } } },
           },
           bankData: true,
         },

@@ -43,8 +43,8 @@ export class ParameterizationModel {
       this.attributes.id != 0 ||
       this.attributes.person.id != 0 ||
       (this.attributes.person.enterprise as EnterprisePerson).id != 0 ||
-      (this.attributes.person.enterprise as EnterprisePerson).contact.id != 0 ||
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.id != 0
+      this.attributes.person.contact.id != 0 ||
+      this.attributes.person.contact.address.id != 0
     )
       return 'operação incorreta.';
 
@@ -57,43 +57,21 @@ export class ParameterizationModel {
     if ((this.attributes.person.enterprise as EnterprisePerson).cnpj.length < 10)
       return 'cnpj invalido.';
 
-    if ((this.attributes.person.enterprise as EnterprisePerson).contact.phone.length < 14)
-      return 'telefone inválido.';
+    if (this.attributes.person.contact.phone.length < 14) return 'telefone inválido.';
+    if (this.attributes.person.contact.cellphone.length < 15) return 'celular inválido.';
     if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.cellphone.length <
-      15
-    )
-      return 'celular inválido.';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.email.length < 5 ||
-      !isEmail((this.attributes.person.enterprise as EnterprisePerson).contact.email)
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
     )
       return 'e-mail inválido.';
 
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua inválida';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'número inválido';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.code
-        .length < 10
-    )
-      return 'cep inválido';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.city.id <= 0
-    )
-      return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
     try {
       const response = await runner.manager.save(Parameterization, this.attributes);
@@ -111,8 +89,8 @@ export class ParameterizationModel {
       this.attributes.id <= 0 ||
       this.attributes.person.id <= 0 ||
       (this.attributes.person.enterprise as EnterprisePerson).id <= 0 ||
-      (this.attributes.person.enterprise as EnterprisePerson).contact.id <= 0 ||
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.id <= 0
+      this.attributes.person.contact.id <= 0 ||
+      this.attributes.person.contact.address.id <= 0
     )
       return 'operação incorreta.';
 
@@ -125,43 +103,21 @@ export class ParameterizationModel {
     if ((this.attributes.person.enterprise as EnterprisePerson).cnpj.length < 10)
       return 'cnpj invalido.';
 
-    if ((this.attributes.person.enterprise as EnterprisePerson).contact.phone.length < 14)
-      return 'telefone inválido.';
+    if (this.attributes.person.contact.phone.length < 14) return 'telefone inválido.';
+    if (this.attributes.person.contact.cellphone.length < 15) return 'celular inválido.';
     if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.cellphone.length <
-      15
-    )
-      return 'celular inválido.';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.email.length < 5 ||
-      !isEmail((this.attributes.person.enterprise as EnterprisePerson).contact.email)
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
     )
       return 'e-mail inválido.';
 
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua inválida';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'número inválido';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.code
-        .length < 10
-    )
-      return 'cep inválido';
-    if (
-      (this.attributes.person.enterprise as EnterprisePerson).contact.address.city.id <= 0
-    )
-      return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
     try {
       const response = await runner.manager.save(Parameterization, this.attributes);
@@ -179,7 +135,7 @@ export class ParameterizationModel {
       const entity = await runner.manager.findOne(Parameterization, {
         where: { id: 1 },
         relations: {
-          person: { enterprise: { contact: { address: { city: { state: true } } } } },
+          person: { enterprise: true, contact: { address: { city: { state: true } } } },
         },
       });
 

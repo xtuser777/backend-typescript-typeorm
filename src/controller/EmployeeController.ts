@@ -44,8 +44,8 @@ export class EmployeeController {
       .toAttributes;
     const address: Address = { id: 0, ...req.body.address, city };
     const contact: Contact = { id: 0, ...req.body.contact, address };
-    const individual: IndividualPerson = { id: 0, ...req.body.person, contact };
-    const person: Person = { id: 0, type: 1, individual, enterprise: undefined };
+    const individual: IndividualPerson = { id: 0, ...req.body.person };
+    const person: Person = { id: 0, type: 1, individual, enterprise: undefined, contact };
     const employee: Employee = { id: 0, ...req.body.employee, person };
 
     const model = new EmployeeModel(employee);
@@ -84,24 +84,25 @@ export class EmployeeController {
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const employee = (await new EmployeeModel().findOne(runner, id)) as EmployeeModel;
+    if (!employee) {
+      await runner.release();
+      return res.status(400).json('fincionario nao cadastrado.');
+    }
     const level = (
       (await new LevelModel().findOne(runner, req.body.employee.level)) as LevelModel
     ).toAttributes;
-    let attributes = employee?.toAttributes as Employee;
-    let address = (attributes.person.individual as IndividualPerson).contact.address;
-    let contact = (attributes.person.individual as IndividualPerson).contact;
-    let individual = attributes.person.individual as IndividualPerson;
-    const person = attributes.person;
-    address = { id: address.id, ...req.body.address, city };
-    contact = { id: contact.id, ...req.body.contact, address };
-    individual = { id: individual.id, ...req.body.person, contact };
-    person.individual = individual;
-    attributes = {
-      ...req.body.employee,
-      passwordHash: attributes.passwordHash,
-      person,
-      level,
-    };
+    employee.toAttributes.type = req.body.employee.type;
+    employee.toAttributes.login = req.body.employee.login;
+    employee.toAttributes.admission = req.body.employee.admission;
+    employee.toAttributes.demission = req.body.employee.demission;
+    (employee.toAttributes.person.individual as IndividualPerson).name =
+      req.body.person.name;
+    (employee.toAttributes.person.individual as IndividualPerson).cpf =
+      req.body.person.cpf;
+    (employee.toAttributes.person.individual as IndividualPerson).birth =
+      req.body.person.birth;
+    employee.toAttributes.person.contact.phone = req.body.contact.phone;
+    employee.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
 
     (employee as EmployeeModel).password = req.body.employee.password;
 

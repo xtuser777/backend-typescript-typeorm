@@ -93,9 +93,9 @@ export class EmployeeModel {
     if (
       this.attributes.id != 0 ||
       this.attributes.person.id != 0 ||
-      (this.attributes.person.individual as IndividualPerson).id != 0 ||
-      (this.attributes.person.individual as IndividualPerson).contact.id != 0 ||
-      (this.attributes.person.individual as IndividualPerson).contact.address.id != 0
+      this.attributes.person.contact.id != 0 ||
+      this.attributes.person.contact.address.id != 0 ||
+      (this.attributes.person.individual as IndividualPerson).id != 0
     )
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
@@ -115,43 +115,23 @@ export class EmployeeModel {
     if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
+    if (this.attributes.person.contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
-      15
-    )
+    if (this.attributes.person.contact.cellphone.length < 15)
       return 'celular do funcionário inválido.';
     if (
-      (this.attributes.person.individual as IndividualPerson).contact.email.length < 5 ||
-      !isEmail((this.attributes.person.individual as IndividualPerson).contact.email)
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
     )
       return 'e-mail inválido.';
 
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua inválida';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'número inválido';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.code
-        .length < 10
-    )
-      return 'cep inválido';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
-    )
-      return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
     if (this._password)
       this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
@@ -172,8 +152,8 @@ export class EmployeeModel {
       this.attributes.id == 0 ||
       this.attributes.person.id == 0 ||
       (this.attributes.person.individual as IndividualPerson).id == 0 ||
-      (this.attributes.person.individual as IndividualPerson).contact.id == 0 ||
-      (this.attributes.person.individual as IndividualPerson).contact.address.id == 0
+      this.attributes.person.contact.id == 0 ||
+      this.attributes.person.contact.address.id == 0
     )
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
@@ -191,43 +171,23 @@ export class EmployeeModel {
     if ((this.attributes.person.individual as IndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if ((this.attributes.person.individual as IndividualPerson).contact.phone.length < 14)
+    if (this.attributes.person.contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.cellphone.length <
-      15
-    )
+    if (this.attributes.person.contact.cellphone.length < 15)
       return 'celular do funcionário inválido.';
     if (
-      (this.attributes.person.individual as IndividualPerson).contact.email.length < 5 ||
-      !isEmail((this.attributes.person.individual as IndividualPerson).contact.email)
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
     )
       return 'e-mail inválido.';
 
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.street
-        .length <= 0
-    )
-      return 'rua inválida';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.number
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
       return 'número inválido';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.neighborhood
-        .length <= 0
-    )
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.code
-        .length < 10
-    )
-      return 'cep inválido';
-    if (
-      (this.attributes.person.individual as IndividualPerson).contact.address.city.id <= 0
-    )
-      return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
     if (this._password)
       this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
@@ -265,7 +225,7 @@ export class EmployeeModel {
       const entity = await runner.manager.findOne(Employee, {
         relations: {
           level: true,
-          person: { individual: { contact: { address: { city: { state: true } } } } },
+          person: { individual: true, contact: { address: { city: { state: true } } } },
         },
         where: { id },
       });
@@ -284,7 +244,7 @@ export class EmployeeModel {
       const entities = await runner.manager.find(Employee, {
         relations: {
           level: true,
-          person: { individual: { contact: { address: { city: { state: true } } } } },
+          person: { individual: true, contact: { address: { city: { state: true } } } },
         },
         where: params,
       });
