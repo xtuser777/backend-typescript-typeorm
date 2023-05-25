@@ -113,7 +113,6 @@ export class ProprietaryController {
     const driver = req.body.prop.driver
       ? await new DriverModel().findOne(runner, req.body.prop.driver)
       : undefined;
-    proprietary.toAttributes.register = req.body.prop.register;
     proprietary.toAttributes.person.contact.phone = req.body.contact.phone;
     proprietary.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
     proprietary.toAttributes.person.contact.email = req.body.contact.email;

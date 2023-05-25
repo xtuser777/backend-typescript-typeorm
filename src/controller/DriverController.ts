@@ -81,14 +81,13 @@ export class DriverController {
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const driver = (await new DriverModel().findOne(runner, id)) as DriverModel;
-    driver.register = req.body.driver.register;
     driver.cnh = req.body.driver.cnh;
 
     driver.person.contact.phone = req.body.contact.phone;
     driver.person.contact.cellphone = req.body.contact.cellphone;
     driver.person.contact.email = req.body.contact.email;
 
-    driver.person.contact.address.street = req.body.adress.street;
+    driver.person.contact.address.street = req.body.address.street;
     driver.person.contact.address.number = req.body.address.number;
     driver.person.contact.address.neighborhood = req.body.address.neighborhood;
     driver.person.contact.address.complement = req.body.address.complement;
