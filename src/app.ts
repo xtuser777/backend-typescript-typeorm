@@ -15,6 +15,7 @@ import driver from './routes/driver';
 import proprietary from './routes/proprietary';
 import type from './routes/truck-type';
 import truck from './routes/truck';
+import representation from './routes/representation';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -65,6 +66,7 @@ class App {
     this.app.use('/proprietary', proprietary);
     this.app.use('/type', type);
     this.app.use('/truck', truck);
+    this.app.use('/representation', representation);
   }
 }
 
