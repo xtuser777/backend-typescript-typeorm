@@ -7,7 +7,7 @@ export class Proprietary {
   @PrimaryGeneratedColumn()
   public id!: number;
 
-  @Column({ length: 10 })
+  @Column('date')
   public register!: string;
 
   @OneToOne(() => Driver, { nullable: true })

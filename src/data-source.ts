@@ -17,6 +17,7 @@ import { Driver } from './entity/Driver';
 import { Proprietary } from './entity/Proprietary';
 import { TruckType } from './entity/TruckType';
 import { Truck } from './entity/Truck';
+import { Representation } from './entity/Representation';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ export const AppDataSource = new DataSource({
     Proprietary,
     TruckType,
     Truck,
+    Representation,
   ],
   migrations: [],
   subscribers: [],
