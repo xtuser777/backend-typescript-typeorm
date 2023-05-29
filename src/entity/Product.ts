@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm';
 import { Representation } from './Representation';
 import { TruckType } from './TruckType';
 
 export class Product {
-  @ProductGeneratedColumn()
+  @PrimaryGeneratedColumn()
   public id!: number;
 
   @Column()
@@ -11,4 +11,19 @@ export class Product {
 
   @Column()
   public measure!: string;
+
+  @Column()
+  public weight!: number;
+
+  @Column()
+  public price!: number;
+
+  @Column()
+  public priceOut!: number;
+
+  @ManyToOne(() => Representation)
+  public representation!: Representation;
+
+  @ManyToMany(() => TruckType)
+  public types!: TruckType[];
 }
