@@ -20,29 +20,39 @@ export class ProductModel {
         };
   }
 
-  get id(): number {}
-  set id(v: number) {}
+  get id(): number { return this.attributes.id; }
+  set id(v: number) { this.attributes = v; }
 
-  get description(): string {}
-  set description(v: string) {}
+  get description(): string { return this.attributes.description; }
+  set description(v: string) { this.attributes.description = v; }
 
-  get measure(): string {}
-  set measure(v: string) {}
+  get measure(): string { return this.attributes.measure; }
+  set measure(v: string) { this.attributes.measure = v; }
 
-  get weight(): number {}
-  set weight(v: number) {}
+  get weight(): number { return this.attributes.weight; }
+  set weight(v: number) { this.attributes.weight = v; }
 
-  get price(): number {}
-  set pricer(v: number) {}
+  get price(): number { return this.attributes.price; }
+  set price(v: number) { this.attributes.price = v; }
 
-  get priceOut(): number {}
-  set priceOut(v: number) {}
+  get priceOut(): number { return this.attributes.priceOut; }
+  set priceOut(v: number) { this.attributes.priceOut = v; }
 
-  get representation(): Representation {}
-  set representation(v: Representation) {}
+  get representation(): Representation { return this.attributes.representation; }
+  set representation(v: Representation) { this.attributes.representation = v; }
 
-  get types(): TruckType[] {}
-  set types(v: TruckType[]) {}
+  get types(): TruckType[] { return this.attributes.types; }
+  set types(v: TruckType[]) { this.attributes.types = v; }
 
-  get toAttributes(): Product {}
+  get toAttributes(): Product { return this.attributes; }
+
+  async save(runner: QueryRunner) {}
+
+  async update(runner: QueryRunner) {}
+
+  async delete(runner: QueryRunner) {}
+
+  async findOne(runner: QueryRunner, id: number) {}
+
+  async find(runner: QueryRunner) {}
 }
