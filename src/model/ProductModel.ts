@@ -1,3 +1,4 @@
+import { QueryRunner } from 'typeorm';
 import { Product } from '../entity/Product';
 import { Representation } from '../entity/Representation';
 import { TruckType } from '../entity/TruckType';
@@ -46,7 +47,27 @@ export class ProductModel {
 
   get toAttributes(): Product { return this.attributes; }
 
-  async save(runner: QueryRunner) {}
+  async save(runner: QueryRunner) {
+    if (this.attributes.id != 0) return 'metodo invalido';
+    if (this.attributes.description.length < 3) return 'descricao invalida.';
+    if (this.attributes.measure.length < 2) return 'unidade de medida invalida.';
+    if (this.attributes.weight <= 0) return 'peso do produto invalido.';
+    if (this.attributes.price <= 0) return 'preco do produto invalido.';
+    if (this.attributes.representation.id <= 0) return '';
+    if (this.attributes.types.length == 0) return '';
+
+    try {
+      const entity = await runner.manager.save(Product, this.attributes);
+      
+      return entity ? '' : 'erro ao inserir o produto';
+    } catch (e) {
+      console.error(e);
+      await runner.rollbackTransaction();
+      await runner.release();
+
+      return (e as TypeORMError).message;
+    }
+  }
 
   async update(runner: QueryRunner) {}
 
