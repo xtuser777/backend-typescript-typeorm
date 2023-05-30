@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Representation } from './Representation';
 import { TruckType } from './TruckType';
 
@@ -25,5 +32,10 @@ export class Product {
   public representation!: Representation;
 
   @ManyToMany(() => TruckType)
+  @JoinTable({
+    name: 'productTypes',
+    joinColumn: { name: 'product', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'truckType', referencedColumnName: 'id' },
+  })
   public types!: TruckType[];
 }
