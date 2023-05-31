@@ -1,16 +1,16 @@
-import { State } from '../entity/State';
-import { StateModel } from '../model/StateModel';
+import { IState } from '../entity/State';
+import { State } from '../model/State';
 import { Request, Response } from 'express';
 
 export class StateController {
   index = async (req: Request, res: Response): Promise<Response> => {
-    const states = await new StateModel(new State()).find();
-    const response = [];
-    for (const state of states) {
-      response.push(state.toAttributes);
-    }
+    const states = await new State(new State()).find();
+    // const response = [];
+    // for (const state of states) {
+    //   response.push(state.toAttributes);
+    // }
 
-    return res.json(response);
+    return res.json(states);
   };
 
   show = async (req: Request, res: Response): Promise<Response> => {
@@ -21,8 +21,8 @@ export class StateController {
     } catch {
       return res.status(400).json('Parametro invalido.');
     }
-    const state = await new StateModel().findOne(id);
+    const state = await new State().findOne(id);
 
-    return res.json(state ? state.toAttributes : undefined);
+    return res.json(state ? state : undefined);
   };
 }

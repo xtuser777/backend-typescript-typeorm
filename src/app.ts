@@ -6,16 +6,17 @@ import 'reflect-metadata';
 import express from 'express';
 import city from './routes/city';
 import state from './routes/state';
-import token from './routes/token';
-import level from './routes/level';
-import employee from './routes/employee';
-import parameterization from './routes/parameterization';
-import client from './routes/client';
-import driver from './routes/driver';
-import proprietary from './routes/proprietary';
-import type from './routes/truck-type';
-import truck from './routes/truck';
-import representation from './routes/representation';
+// import token from './routes/token';
+// import level from './routes/level';
+// import employee from './routes/employee';
+// import parameterization from './routes/parameterization';
+// import client from './routes/client';
+// import driver from './routes/driver';
+// import proprietary from './routes/proprietary';
+// import type from './routes/truck-type';
+// import truck from './routes/truck';
+// import representation from './routes/representation';
+// import product from './routes/product';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -57,16 +58,17 @@ class App {
   private routes() {
     this.app.use('/state', state);
     this.app.use('/city', city);
-    this.app.use('/token', token);
-    this.app.use('/employee', employee);
-    this.app.use('/level', level);
-    this.app.use('/parameterization', parameterization);
-    this.app.use('/client', client);
-    this.app.use('/driver', driver);
-    this.app.use('/proprietary', proprietary);
-    this.app.use('/type', type);
-    this.app.use('/truck', truck);
-    this.app.use('/representation', representation);
+    // this.app.use('/token', token);
+    // this.app.use('/employee', employee);
+    // this.app.use('/level', level);
+    // this.app.use('/parameterization', parameterization);
+    // this.app.use('/client', client);
+    // this.app.use('/driver', driver);
+    // this.app.use('/proprietary', proprietary);
+    // this.app.use('/type', type);
+    // this.app.use('/truck', truck);
+    // this.app.use('/representation', representation);
+    // this.app.use('/product', product);
   }
 }
 

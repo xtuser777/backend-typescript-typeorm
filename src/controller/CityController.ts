@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { CityModel } from '../model/CityModel';
+import { City } from '../model/City';
 
 export class CityController {
   index = async (req: Request, res: Response): Promise<Response> => {
-    const cities = await new CityModel().find();
-    const response = [];
-    for (const city of cities) {
-      response.push(city.toAttributes);
-    }
+    const cities = await new City().find();
+    // const response = [];
+    // for (const city of cities) {
+    //   response.push(city.toAttributes);
+    // }
 
-    return res.json(response);
+    return res.json(cities);
   };
 
   show = async (req: Request, res: Response): Promise<Response> => {
@@ -21,8 +21,8 @@ export class CityController {
     } catch {
       return res.status(400).json('parametro invalido.');
     }
-    const city = await new CityModel().findOne(id);
+    const city = await new City().findOne(id);
 
-    return res.json(city ? city.toAttributes : undefined);
+    return res.json(city ? city : undefined);
   };
 }

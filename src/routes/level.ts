@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { LevelController } from '../controller/LevelController';
+// import { Router } from 'express';
+// import { LevelController } from '../controller/LevelController';
 
-const router = Router();
+// const router = Router();
 
-router.get('/', new LevelController().index);
+// router.get('/', new LevelController().index);
 
-router.get('/:id', new LevelController().show);
+// router.get('/:id', new LevelController().show);
 
-export default router;
+// export default router;

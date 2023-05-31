@@ -18,6 +18,7 @@ import { Proprietary } from './entity/Proprietary';
 import { TruckType } from './entity/TruckType';
 import { Truck } from './entity/Truck';
 import { Representation } from './entity/Representation';
+import { Product } from './entity/Product';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ export const AppDataSource = new DataSource({
     TruckType,
     Truck,
     Representation,
+    Product,
   ],
   migrations: [],
   subscribers: [],

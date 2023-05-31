@@ -1,41 +1,64 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
-import { Representation } from './Representation';
-import { TruckType } from './TruckType';
+import { EntitySchema } from 'typeorm';
+import { IRepresentation } from './Representation';
+import { ITruckType } from './TruckType';
 
-export class Product {
-  @PrimaryGeneratedColumn()
-  public id!: number;
-
-  @Column()
-  public description!: string;
-
-  @Column()
-  public measure!: string;
-
-  @Column()
-  public weight!: number;
-
-  @Column()
-  public price!: number;
-
-  @Column()
-  public priceOut!: number;
-
-  @ManyToOne(() => Representation)
-  public representation!: Representation;
-
-  @ManyToMany(() => TruckType)
-  @JoinTable({
-    name: 'productTypes',
-    joinColumn: { name: 'product', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'truckType', referencedColumnName: 'id' },
-  })
-  public types!: TruckType[];
+export interface IProduct {
+  id: number;
+  description: string;
+  measure: string;
+  weight: number;
+  price: number;
+  priceOut: number;
+  representation: IRepresentation;
+  types: ITruckType[];
 }
+
+export const Product = new EntitySchema<IProduct>({
+  name: 'product',
+  columns: {
+    id: {
+      type: 'integer',
+      primary: true,
+      generated: 'increment',
+    },
+    description: {
+      type: 'varchar',
+      length: 40,
+      nullable: false,
+    },
+    measure: {
+      type: 'varchar',
+      length: 20,
+      nullable: false,
+    },
+    weight: {
+      type: 'float',
+      nullable: false,
+    },
+    price: {
+      type: 'float',
+      nullable: false,
+    },
+    priceOut: {
+      name: 'price_out',
+      type: 'float',
+      nullable: false,
+    },
+  },
+  relations: {
+    representation: {
+      type: 'many-to-one',
+      target: 'representation',
+    },
+    types: {
+      type: 'many-to-many',
+      target: 'truck_type',
+      joinTable: {
+        name: 'product_truck_type',
+        joinColumn: { name: 'product', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'truck_type', referencedColumnName: 'id' },
+      },
+      cascade: true,
+    },
+  },
+});

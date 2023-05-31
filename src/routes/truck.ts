@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { TruckController } from '../controller/TruckController';
-import userAuthenticated from '../middleware/user-authenticated';
+// import { Router } from 'express';
+// import { TruckController } from '../controller/TruckController';
+// import userAuthenticated from '../middleware/user-authenticated';
 
-const router = Router();
+// const router = Router();
 
-router.get('/', userAuthenticated, new TruckController().index);
+// router.get('/', userAuthenticated, new TruckController().index);
 
-router.get('/:id', userAuthenticated, new TruckController().show);
+// router.get('/:id', userAuthenticated, new TruckController().show);
 
-router.post('/', userAuthenticated, new TruckController().store);
+// router.post('/', userAuthenticated, new TruckController().store);
 
-router.put('/:id', userAuthenticated, new TruckController().update);
+// router.put('/:id', userAuthenticated, new TruckController().update);
 
-router.delete('/:id', userAuthenticated, new TruckController().delete);
+// router.delete('/:id', userAuthenticated, new TruckController().delete);
 
-export default router;
+// export default router;

@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { RepresentationController } from '../controller/RepresentationController';
-import userAuthenticated from '../middleware/user-authenticated';
+// import { Router } from 'express';
+// import { RepresentationController } from '../controller/RepresentationController';
+// import userAuthenticated from '../middleware/user-authenticated';
 
-const router = Router();
+// const router = Router();
 
-router.get('/', userAuthenticated, new RepresentationController().index);
+// router.get('/', userAuthenticated, new RepresentationController().index);
 
-router.get('/:id', userAuthenticated, new RepresentationController().show);
+// router.get('/:id', userAuthenticated, new RepresentationController().show);
 
-router.post('/', userAuthenticated, new RepresentationController().store);
+// router.post('/', userAuthenticated, new RepresentationController().store);
 
-router.put('/:id', userAuthenticated, new RepresentationController().update);
+// router.put('/:id', userAuthenticated, new RepresentationController().update);
 
-router.delete('/:id', userAuthenticated, new RepresentationController().delete);
+// router.delete('/:id', userAuthenticated, new RepresentationController().delete);
 
-export default router;
+// export default router;
