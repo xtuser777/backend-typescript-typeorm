@@ -4,12 +4,12 @@ import { City } from '../model/City';
 export class CityController {
   index = async (req: Request, res: Response): Promise<Response> => {
     const cities = await new City().find();
-    // const response = [];
-    // for (const city of cities) {
-    //   response.push(city.toAttributes);
-    // }
+    const response = [];
+    for (const city of cities) {
+      response.push(city.toAttributes);
+    }
 
-    return res.json(cities);
+    return res.json(response);
   };
 
   show = async (req: Request, res: Response): Promise<Response> => {
@@ -23,6 +23,6 @@ export class CityController {
     }
     const city = await new City().findOne(id);
 
-    return res.json(city ? city : undefined);
+    return res.json(city ? city.toAttributes : undefined);
   };
 }

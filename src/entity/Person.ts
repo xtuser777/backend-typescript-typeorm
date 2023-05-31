@@ -34,8 +34,8 @@ import { IContact } from './Contact';
 export interface IPerson {
   id: number;
   type: number;
-  individual: IIndividualPerson;
-  enterprise: IEnterprisePerson;
+  individual?: IIndividualPerson;
+  enterprise?: IEnterprisePerson;
   contact: IContact;
 }
 

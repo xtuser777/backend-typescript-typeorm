@@ -3,44 +3,43 @@ import { IState, State as StateEntity } from '../entity/State';
 import { AppDataSource } from '../data-source';
 
 export class State implements IState {
-  private _id: number;
-  private _name: string;
-  private _acronym: string;
-  private _cities: ICity[];
+  private attributes!: IState;
 
-  constructor(values?: IState) {
-    this._id = values ? values.id : 0;
-    this._name = values ? values.name : '';
-    this._acronym = values ? values.acronym : '';
-    this._cities = values ? values.cities : [];
+  constructor(attributes?: IState) {
+    if (attributes) this.attributes = attributes;
   }
 
   get id(): number {
-    return this._id;
+    return this.attributes.id;
   }
   set id(v: number) {
-    this._id = v;
+    this.attributes.id = v;
   }
 
   get name(): string {
-    return this._name;
+    return this.attributes.name;
   }
   set name(v: string) {
-    this._name = v;
+    this.attributes.name = v;
   }
 
   get acronym(): string {
-    return this._acronym;
+    return this.attributes.acronym;
   }
   set acronym(v: string) {
-    this._acronym = v;
+    this.attributes.acronym = v;
   }
 
   get cities(): ICity[] {
-    return this._cities;
+    return this.attributes.cities;
   }
   set cities(v: ICity[]) {
-    this._cities = v;
+    this.attributes.cities = v;
+  }
+
+  get toAttributes(): IState {
+    const attributes: IState = { ...this.attributes };
+    return attributes;
   }
 
   async findOne(id: number) {

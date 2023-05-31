@@ -72,7 +72,6 @@ export const Address = new EntitySchema<IAddress>({
     city: {
       type: 'many-to-one',
       target: 'city',
-      cascade: true,
     },
   },
 });

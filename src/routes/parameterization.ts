@@ -1,13 +1,13 @@
-// import { Router } from 'express';
-// import { ParameterizationController } from '../controller/ParameterizationController';
-// import userAuthenticated from '../middleware/user-authenticated';
+import { Router } from 'express';
+import { ParameterizationController } from '../controller/ParameterizationController';
+import userAuthenticated from '../middleware/user-authenticated';
 
-// const router = Router();
+const router = Router();
 
-// router.get('/', userAuthenticated, new ParameterizationController().index);
+router.get('/', userAuthenticated, new ParameterizationController().index);
 
-// router.post('/', userAuthenticated, new ParameterizationController().store);
+router.post('/', userAuthenticated, new ParameterizationController().store);
 
-// router.put('/', userAuthenticated, new ParameterizationController().update);
+router.put('/', userAuthenticated, new ParameterizationController().update);
 
-// export default router;
+export default router;

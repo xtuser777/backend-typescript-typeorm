@@ -5,12 +5,12 @@ import { Request, Response } from 'express';
 export class StateController {
   index = async (req: Request, res: Response): Promise<Response> => {
     const states = await new State(new State()).find();
-    // const response = [];
-    // for (const state of states) {
-    //   response.push(state.toAttributes);
-    // }
+    const response: IState[] = [];
+    for (const state of states) {
+      response.push(state.toAttributes);
+    }
 
-    return res.json(states);
+    return res.json(response);
   };
 
   show = async (req: Request, res: Response): Promise<Response> => {
@@ -23,6 +23,6 @@ export class StateController {
     }
     const state = await new State().findOne(id);
 
-    return res.json(state ? state : undefined);
+    return res.json(state ? state.toAttributes : undefined);
   };
 }

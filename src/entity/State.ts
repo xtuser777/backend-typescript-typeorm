@@ -42,6 +42,7 @@ export const State = new EntitySchema<IState>({
     cities: {
       type: 'one-to-many',
       target: 'city',
+      inverseSide: 'state',
     },
   },
 });

@@ -34,6 +34,10 @@ export const City = new EntitySchema<ICity>({
     state: {
       type: 'many-to-one',
       target: 'state',
+      joinColumn: {
+        name: 'stateId',
+      },
+      inverseSide: 'cities',
     },
   },
 });
