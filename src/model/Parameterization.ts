@@ -75,12 +75,11 @@ export class Parameterization implements IParameterization {
     if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
     try {
-      const response = await runner.manager.save(ParameterizationEntity, this);
+      const response = await runner.manager.save(ParameterizationEntity, this.attributes);
       return response ? '' : 'erro ao registrar a parametrizacao';
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return (e as TypeORMError).message;
     }
   }
@@ -120,19 +119,12 @@ export class Parameterization implements IParameterization {
     if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
     if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
-    const entity: IParameterization = {
-      id: this.id,
-      logotype: this.logotype,
-      person: this.person,
-    };
-
     try {
-      const response = await runner.manager.save(ParameterizationEntity, entity);
+      const response = await runner.manager.save(ParameterizationEntity, this.attributes);
       return response ? '' : 'erro ao registrar a parametrizacao';
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return (e as TypeORMError).message;
     }
   }
@@ -149,8 +141,6 @@ export class Parameterization implements IParameterization {
       return entity ? new Parameterization(entity) : undefined;
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
 
       return undefined;
     }

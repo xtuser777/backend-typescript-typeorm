@@ -1,62 +1,45 @@
 import isEmail from 'validator/lib/isEmail';
 import { IEmployee, Employee as EmployeeEntity } from '../entity/Employee';
-import { ILevel, Level } from '../entity/Level';
-import { IPerson, Person } from '../entity/Person';
+import { ILevel } from '../entity/Level';
+import { IPerson } from '../entity/Person';
 import bcryptjs from 'bcryptjs';
 import { QueryRunner, TypeORMError } from 'typeorm';
 import { IIndividualPerson } from '../entity/IndividualPerson';
 
 export class Employee implements IEmployee {
-  private _id: number;
-  private _type: number;
-  private _login: string;
-  private _passwordHash: string;
+  private attributes!: IEmployee;
   private _password?: string;
-  private _admission: string;
-  private _demission?: string;
-  private _person!: IPerson;
-  private _level!: ILevel;
 
-  constructor(value?: IEmployee) {
-    this._id = value ? value.id : 0;
-    this._type = value ? value.type : 0;
-    this._login = value ? value.login : '';
-    this._passwordHash = value ? value.passwordHash : '';
-    this._password = undefined;
-    this._admission = value ? value.admission : '';
-    this._demission = value ? value.demission : undefined;
-    if (value) {
-      this._person = value.person;
-      this._level = value.level;
-    }
+  constructor(attributes?: IEmployee) {
+    if (attributes) this.attributes = attributes;
   }
 
   get id(): number {
-    return this._id;
+    return this.attributes.id;
   }
   set id(v: number) {
-    this._id = v;
+    this.attributes.id = v;
   }
 
   get type(): number {
-    return this._type;
+    return this.attributes.type;
   }
   set type(v: number) {
-    this._type = v;
+    this.attributes.type = v;
   }
 
   get login(): string {
-    return this._login;
+    return this.attributes.login;
   }
   set login(v: string) {
-    this._login = v;
+    this.attributes.login = v;
   }
 
   get passwordHash(): string {
-    return this._passwordHash;
+    return this.attributes.passwordHash;
   }
   set passwordHash(v: string) {
-    this._passwordHash = v;
+    this.attributes.passwordHash = v;
   }
 
   get password(): string | undefined {
@@ -67,147 +50,163 @@ export class Employee implements IEmployee {
   }
 
   get admission(): string {
-    return this._admission;
+    return this.attributes.admission;
   }
   set admission(v: string) {
-    this._admission = v;
+    this.attributes.admission = v;
   }
 
   get demission(): string | undefined {
-    return this._demission;
+    return this.attributes.demission;
   }
   set demission(v: string | undefined) {
-    this._demission = v;
+    this.attributes.demission = v;
   }
 
   get person(): IPerson {
-    return this._person;
+    return this.attributes.person;
   }
   set person(v: IPerson) {
-    this._person = v;
+    this.attributes.person = v;
   }
 
   get level(): ILevel {
-    return this._level;
+    return this.attributes.level;
   }
   set level(v: ILevel) {
-    this._level = v;
+    this.attributes.level = v;
+  }
+
+  get toAttributes(): IEmployee {
+    const attributes: IEmployee = { ...this.attributes };
+    return attributes;
   }
 
   autenticate = async (password: string) =>
-    await bcryptjs.compare(password, this._passwordHash);
+    await bcryptjs.compare(password, this.attributes.passwordHash);
 
   async save(runner: QueryRunner) {
     if (
-      this._id != 0 ||
-      this._person.id != 0 ||
-      this._person.contact.id != 0 ||
-      this._person.contact.address.id != 0 ||
-      (this._person.individual as IIndividualPerson).id != 0
+      this.attributes.id != 0 ||
+      this.attributes.person.id != 0 ||
+      this.attributes.person.contact.id != 0 ||
+      this.attributes.person.contact.address.id != 0 ||
+      (this.attributes.person.individual as IIndividualPerson).id != 0
     )
       return 'operação incorreta.';
-    if (this._type <= 0 || this._type > 2) return 'tipo de funcionário inválido.';
-    if (this._login.length < 3) return 'login inválido.';
+    if (this.attributes.type <= 0 || this.attributes.type > 2)
+      return 'tipo de funcionário inválido.';
+    if (this.attributes.login.length < 3) return 'login inválido.';
     if (!this._password || (this._password && this._password.length < 6))
       return 'senha inválida.';
-    if (this._admission.length < 10) return 'data de admissão inválida.';
-    if (this._level.id <= 0) return 'nível de funcionário inválido.';
+    if (this.attributes.admission.length < 10) return 'data de admissão inválida.';
+    if (this.attributes.level.id <= 0) return 'nível de funcionário inválido.';
 
-    if (this._person.type <= 0 || this._person.type > 2) return 'tipo de pessoa inválido';
-    if ((this._person.individual as IIndividualPerson).name.length < 5)
+    if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
+      return 'tipo de pessoa inválido';
+    if ((this.attributes.person.individual as IIndividualPerson).name.length < 5)
       return 'nome do funcionário inválido.';
-    if ((this._person.individual as IIndividualPerson).cpf.length < 14)
+    if ((this.attributes.person.individual as IIndividualPerson).cpf.length < 14)
       return 'cpf do funcionário inválido.';
-    if ((this._person.individual as IIndividualPerson).birth.length < 10)
+    if ((this.attributes.person.individual as IIndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if (this._person.contact.phone.length < 14)
+    if (this.attributes.person.contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (this._person.contact.cellphone.length < 15)
+    if (this.attributes.person.contact.cellphone.length < 15)
       return 'celular do funcionário inválido.';
-    if (this._person.contact.email.length < 5 || !isEmail(this._person.contact.email))
+    if (
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
+    )
       return 'e-mail inválido.';
 
-    if (this._person.contact.address.street.length <= 0) return 'rua inválida';
-    if (this._person.contact.address.number.length <= 0) return 'número inválido';
-    if (this._person.contact.address.neighborhood.length <= 0)
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
+      return 'número inválido';
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (this._person.contact.address.code.length < 10) return 'cep inválido';
-    if (this._person.contact.address.city.id <= 0) return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
-    if (this._password) this._passwordHash = await bcryptjs.hash(this._password, 8);
+    if (this._password)
+      this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
 
     try {
-      const response = await runner.manager.save(EmployeeEntity, this);
+      const response = await runner.manager.save(EmployeeEntity, this.attributes);
       return response ? '' : 'erro ao inserir o funcionário';
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return (e as TypeORMError).message;
     }
   }
 
   async update(runner: QueryRunner) {
     if (
-      this._id == 0 ||
-      this._person.id == 0 ||
-      (this._person.individual as IIndividualPerson).id == 0 ||
-      this._person.contact.id == 0 ||
-      this._person.contact.address.id == 0
+      this.attributes.id == 0 ||
+      this.attributes.person.id == 0 ||
+      (this.attributes.person.individual as IIndividualPerson).id == 0 ||
+      this.attributes.person.contact.id == 0 ||
+      this.attributes.person.contact.address.id == 0
     )
       return 'operação incorreta.';
-    if (this._type <= 0 || this._type > 2) return 'tipo de funcionário inválido.';
-    if (this._login.length < 3) return 'login inválido.';
-    if (this._admission.length < 10) return 'data de admissão inválida.';
-    if (this._level.id <= 0) return 'nível de funcionário inválido.';
+    if (this.attributes.type <= 0 || this.attributes.type > 2)
+      return 'tipo de funcionário inválido.';
+    if (this.attributes.login.length < 3) return 'login inválido.';
+    if (this.attributes.admission.length < 10) return 'data de admissão inválida.';
+    if (this.attributes.level.id <= 0) return 'nível de funcionário inválido.';
 
-    if (this._person.type <= 0 || this._person.type > 2) return 'tipo de pessoa inválido';
-    if ((this._person.individual as IIndividualPerson).name.length < 5)
+    if (this.attributes.person.type <= 0 || this.attributes.person.type > 2)
+      return 'tipo de pessoa inválido';
+    if ((this.attributes.person.individual as IIndividualPerson).name.length < 5)
       return 'nome do funcionário inválido.';
-    if ((this._person.individual as IIndividualPerson).cpf.length < 14)
+    if ((this.attributes.person.individual as IIndividualPerson).cpf.length < 14)
       return 'cpf do funcionário inválido.';
-    if ((this._person.individual as IIndividualPerson).birth.length < 10)
+    if ((this.attributes.person.individual as IIndividualPerson).birth.length < 10)
       return 'data de nascimento inválida.';
 
-    if (this._person.contact.phone.length < 14)
+    if (this.attributes.person.contact.phone.length < 14)
       return 'telefone do funcionário inválido.';
-    if (this._person.contact.cellphone.length < 15)
+    if (this.attributes.person.contact.cellphone.length < 15)
       return 'celular do funcionário inválido.';
-    if (this._person.contact.email.length < 5 || !isEmail(this._person.contact.email))
+    if (
+      this.attributes.person.contact.email.length < 5 ||
+      !isEmail(this.attributes.person.contact.email)
+    )
       return 'e-mail inválido.';
 
-    if (this._person.contact.address.street.length <= 0) return 'rua inválida';
-    if (this._person.contact.address.number.length <= 0) return 'número inválido';
-    if (this._person.contact.address.neighborhood.length <= 0)
+    if (this.attributes.person.contact.address.street.length <= 0) return 'rua inválida';
+    if (this.attributes.person.contact.address.number.length <= 0)
+      return 'número inválido';
+    if (this.attributes.person.contact.address.neighborhood.length <= 0)
       return 'bairro ou distrito inválido.';
-    if (this._person.contact.address.code.length < 10) return 'cep inválido';
-    if (this._person.contact.address.city.id <= 0) return 'cidade inválida';
+    if (this.attributes.person.contact.address.code.length < 10) return 'cep inválido';
+    if (this.attributes.person.contact.address.city.id <= 0) return 'cidade inválida';
 
-    if (this._password) this._passwordHash = await bcryptjs.hash(this._password, 8);
+    if (this._password)
+      this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
 
     try {
-      const response = await runner.manager.save(EmployeeEntity, this);
+      const response = await runner.manager.save(EmployeeEntity, this.attributes);
       return response ? '' : 'erro ao atualizar o funcionário';
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return (e as TypeORMError).message;
     }
   }
 
   async delete(runner: QueryRunner) {
-    if (this._id <= 0) return 'registro incorreto.';
+    if (this.attributes.id <= 0) return 'registro incorreto.';
 
     try {
-      const response = await runner.manager.remove(EmployeeEntity, this);
+      const response = await runner.manager.remove(EmployeeEntity, this.attributes);
 
       return response ? '' : 'erro ao remover o funcionário.';
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return (e as TypeORMError).message;
     }
   }
@@ -227,8 +226,7 @@ export class Employee implements IEmployee {
       return entity ? new Employee(entity) : undefined;
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return undefined;
     }
   }
@@ -250,8 +248,7 @@ export class Employee implements IEmployee {
       return employees;
     } catch (e) {
       console.error(e);
-      await runner.rollbackTransaction();
-      await runner.release();
+
       return [];
     }
   }

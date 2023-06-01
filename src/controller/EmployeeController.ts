@@ -15,7 +15,7 @@ export class EmployeeController {
     await runner.connect();
     const employees = await new Employee().find(runner);
     const response = [];
-    for (const employee of employees) response.push(this.responseBuild(employee));
+    for (const employee of employees) response.push(employee.toAttributes);
     await runner.release();
 
     return res.json(response);
@@ -34,7 +34,7 @@ export class EmployeeController {
     const employee = await new Employee().findOne(runner, id);
     await runner.release();
 
-    return res.json(employee ? this.responseBuild(employee) : undefined);
+    return res.json(employee ? employee.toAttributes : undefined);
   };
 
   async store(req: Request, res: Response) {
@@ -152,19 +152,4 @@ export class EmployeeController {
 
     return res.json(response);
   }
-
-  responseBuild = (employee: Employee) => {
-    const response: IEmployee = {
-      id: employee.id,
-      type: employee.type,
-      login: employee.login,
-      passwordHash: '',
-      admission: employee.admission,
-      demission: employee.demission,
-      person: employee.person,
-      level: employee.level,
-    };
-
-    return response;
-  };
 }

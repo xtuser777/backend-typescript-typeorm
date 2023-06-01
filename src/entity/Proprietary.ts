@@ -40,7 +40,7 @@ export const Proprietary = new EntitySchema<IProprietary>({
     register: { type: 'date', nullable: false },
   },
   relations: {
-    driver: { type: 'one-to-one', target: 'driver', nullable: true },
-    person: { type: 'one-to-one', target: 'person', cascade: true },
+    driver: { type: 'one-to-one', target: 'driver', joinColumn: true, nullable: true },
+    person: { type: 'one-to-one', target: 'person', joinColumn: true, cascade: true },
   },
 });

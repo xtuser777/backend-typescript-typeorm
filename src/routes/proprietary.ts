@@ -1,17 +1,17 @@
-// import { Router } from 'express';
-// import { ProprietaryController } from '../controller/ProprietaryController';
-// import userAuthenticated from '../middleware/user-authenticated';
+import { Router } from 'express';
+import { ProprietaryController } from '../controller/ProprietaryController';
+import userAuthenticated from '../middleware/user-authenticated';
 
-// const router = Router();
+const router = Router();
 
-// router.get('/', userAuthenticated, new ProprietaryController().index);
+router.get('/', userAuthenticated, new ProprietaryController().index);
 
-// router.get('/:id', userAuthenticated, new ProprietaryController().show);
+router.get('/:id', userAuthenticated, new ProprietaryController().show);
 
-// router.post('/', userAuthenticated, new ProprietaryController().store);
+router.post('/', userAuthenticated, new ProprietaryController().store);
 
-// router.put('/:id', userAuthenticated, new ProprietaryController().update);
+router.put('/:id', userAuthenticated, new ProprietaryController().update);
 
-// router.delete('/:id', userAuthenticated, new ProprietaryController().delete);
+router.delete('/:id', userAuthenticated, new ProprietaryController().delete);
 
-// export default router;
+export default router;
