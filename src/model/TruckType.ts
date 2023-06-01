@@ -1,46 +1,45 @@
-// import { QueryRunner, TypeORMError } from 'typeorm';
-// import { TruckType } from '../entity/TruckType';
+import { QueryRunner, TypeORMError } from 'typeorm';
+import { ITruckType } from '../entity/TruckType';
 
-// export class TruckTypeModel {
-//   private attributes: TruckType;
+export class TruckType implements ITruckType {
+  private attributes!: ITruckType;
 
-//   constructor(attributes?: TruckType) {
-//     this.attributes = attributes
-//       ? attributes
-//       : { id: 0, description: '', axes: 0, capacity: 0.0 };
-//   }
+  constructor(attributes?: ITruckType) {
+    if (attributes) this.attributes = attributes;
+  }
 
-//   get id(): number {
-//     return this.attributes.id;
-//   }
-//   set id(v: number) {
-//     this.attributes.id = v;
-//   }
+  get id(): number {
+    return this.attributes.id;
+  }
+  set id(v: number) {
+    this.attributes.id = v;
+  }
 
-//   get description(): string {
-//     return this.attributes.description;
-//   }
-//   set description(v: string) {
-//     this.attributes.description = v;
-//   }
+  get description(): string {
+    return this.attributes.description;
+  }
+  set description(v: string) {
+    this.attributes.description = v;
+  }
 
-//   get axes(): number {
-//     return this.attributes.axes;
-//   }
-//   set axes(v: number) {
-//     this.attributes.axes = v;
-//   }
+  get axes(): number {
+    return this.attributes.axes;
+  }
+  set axes(v: number) {
+    this.attributes.axes = v;
+  }
 
-//   get capacity(): number {
-//     return this.attributes.capacity;
-//   }
-//   set capacity(v: number) {
-//     this.attributes.capacity = v;
-//   }
+  get capacity(): number {
+    return this.attributes.capacity;
+  }
+  set capacity(v: number) {
+    this.attributes.capacity = v;
+  }
 
-//   get toAttributes(): TruckType {
-//     return this.attributes;
-//   }
+  get toAttributes(): TruckType {
+    const attributes: ITruckType = { ...this.attributes };
+    return attributes;
+  }
 
 //   async save(runner: QueryRunner) {
 //     if (this.attributes.id != 0) return 'metodo incorreto.';
@@ -122,4 +121,4 @@
 //       return [];
 //     }
 //   }
-// }
+}
