@@ -59,6 +59,8 @@ export const Product = new EntitySchema<IProduct>({
         inverseJoinColumn: { name: 'truck_type', referencedColumnName: 'id' },
       },
       cascade: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
   },
 });

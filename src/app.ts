@@ -17,6 +17,10 @@ import type from './routes/truck-type';
 import truck from './routes/truck';
 import representation from './routes/representation';
 import product from './routes/product';
+import paymentForm from './routes/payment-form';
+import billPayCategory from './routes/bill-pay-category';
+import saleBudget from './routes/sale-budget';
+import freightBudget from './routes/freight-budget';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -69,6 +73,10 @@ class App {
     this.app.use('/truck', truck);
     this.app.use('/representation', representation);
     this.app.use('/product', product);
+    this.app.use('/payment-form', paymentForm);
+    this.app.use('/bill-pay-category', billPayCategory);
+    this.app.use('/sale-budget', saleBudget);
+    this.app.use('/freight-budget', freightBudget);
   }
 }
 

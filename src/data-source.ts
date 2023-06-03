@@ -19,6 +19,12 @@ import { TruckType } from './entity/TruckType';
 import { Truck } from './entity/Truck';
 import { Representation } from './entity/Representation';
 import { Product } from './entity/Product';
+import { PaymentForm } from './entity/PaymentForm';
+import { BillPayCategory } from './entity/BillPayCategory';
+import { SaleBudget } from './entity/SaleBudget';
+import { SaleBudgetItem } from './entity/SaleBudgetItem';
+import { FreightBudget } from './entity/FreightBudget';
+import { FreightBudgetItem } from './entity/FreightBudgetItem';
 
 dotenv.config();
 
@@ -50,6 +56,12 @@ export const AppDataSource = new DataSource({
     Truck,
     Representation,
     Product,
+    PaymentForm,
+    BillPayCategory,
+    SaleBudgetItem,
+    SaleBudget,
+    FreightBudgetItem,
+    FreightBudget,
   ],
   migrations: [],
   subscribers: [],
