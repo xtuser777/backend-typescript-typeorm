@@ -66,6 +66,11 @@ export class Product implements IProduct {
     this.attributes.types = v;
   }
 
+  get toAttributes(): IProduct {
+    const attributes: IProduct = { ...this.attributes };
+    return attributes;
+  }
+
   async save(runner: QueryRunner) {
     if (this.attributes.id != 0) return 'metodo invalido';
     if (this.attributes.description.length < 3) return 'descricao invalida.';

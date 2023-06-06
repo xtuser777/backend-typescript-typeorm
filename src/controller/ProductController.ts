@@ -11,8 +11,10 @@ export class ProductController {
       await runner.connect();
       const products = await new Product().find(runner);
       await runner.release();
+      const response = [];
+      for (const product of products) response.push(product.toAttributes);
 
-      return res.json(products);
+      return res.json(response);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
@@ -29,7 +31,7 @@ export class ProductController {
       const product = await new Product().findOne(runner, id);
       await runner.release();
 
-      return res.json(product);
+      return res.json(product ? product.toAttributes : undefined);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);

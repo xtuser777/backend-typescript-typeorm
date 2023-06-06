@@ -118,7 +118,7 @@ export class Representation implements IRepresentation {
     if (this.attributes.id <= 0) return 'método inválido.';
 
     try {
-      const response = await runner.manager.remove(this.attributes);
+      const response = await runner.manager.remove(RepresentationEntity, this.attributes);
 
       return response ? '' : 'erro ao remover a representação.';
     } catch (e) {
