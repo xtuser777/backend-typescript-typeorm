@@ -40,7 +40,12 @@ export class BillPayCategoryController {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('reqisição sem corpo.');
     const payload = req.body;
-    const category: IBillPayCategory = { id: 0, ...payload.category };
+    const category: IBillPayCategory = {
+      id: 0,
+      description: payload.category.description,
+    };
+    console.log(category);
+
     const model = new BillPayCategory(category);
     const runner = AppDataSource.createQueryRunner();
     try {

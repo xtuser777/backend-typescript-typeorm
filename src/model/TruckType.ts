@@ -79,7 +79,7 @@ export class TruckType implements ITruckType {
     if (this.attributes.id <= 0) return 'registro invalido.';
 
     try {
-      const response = await runner.manager.remove(this.attributes);
+      const response = await runner.manager.remove(TruckTypeEntity, this.attributes);
 
       return response ? '' : 'erro ao remover o tipo de caminhao';
     } catch (e) {

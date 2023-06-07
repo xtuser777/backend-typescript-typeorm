@@ -79,7 +79,7 @@ export class PaymentForm implements IPaymentForm {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      const entity = await runner.manager.remove(this.attributes);
+      const entity = await runner.manager.remove(PaymentFormEntity, this.attributes);
 
       return entity ? '' : 'erro ao remover a forma de pagamento.';
     } catch (e) {

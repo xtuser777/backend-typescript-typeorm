@@ -32,7 +32,7 @@ export class BillPayCategory implements IBillPayCategory {
 
   async save(runner: QueryRunner) {
     if (this.attributes.id != 0) return 'operação inválida';
-    if (this.attributes.description.length < 2) return 'descrição inválida.';
+    if (this.attributes.description.length < 1) return 'descrição inválida.';
 
     try {
       const entity = await runner.manager.save(BillPayCategoryEntity, this.attributes);
@@ -47,7 +47,7 @@ export class BillPayCategory implements IBillPayCategory {
 
   async update(runner: QueryRunner) {
     if (this.attributes.id <= 0) return 'operação inválida';
-    if (this.attributes.description.length < 2) return 'descrição inválida.';
+    if (this.attributes.description.length < 1) return 'descrição inválida.';
 
     try {
       const entity = await runner.manager.save(BillPayCategoryEntity, this.attributes);
@@ -64,7 +64,7 @@ export class BillPayCategory implements IBillPayCategory {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      const entity = await runner.manager.remove(this.attributes);
+      const entity = await runner.manager.remove(BillPayCategoryEntity, this.attributes);
 
       return entity ? '' : 'erro ao remover a categoria.';
     } catch (e) {

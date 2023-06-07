@@ -186,7 +186,7 @@ export class Proprietary implements IProprietary {
     if (this.attributes.id <= 0) return 'registro incorreto.';
 
     try {
-      const response = await runner.manager.remove(this.attributes);
+      const response = await runner.manager.remove(ProprietaryEntity, this.attributes);
 
       return response ? '' : 'erro ao remover o proprietary.';
     } catch (e) {

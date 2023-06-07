@@ -129,7 +129,7 @@ export class Driver implements IDriver {
   async delete(runner: QueryRunner) {
     if (this.attributes.id <= 0) return 'registro invalido';
     try {
-      const response = await runner.manager.remove(this.attributes);
+      const response = await runner.manager.remove(DriverEntity, this.attributes);
 
       return response ? '' : 'erro ao remover o motorista.';
     } catch (e) {
