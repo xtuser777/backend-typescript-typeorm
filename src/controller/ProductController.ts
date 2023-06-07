@@ -3,6 +3,7 @@ import { AppDataSource } from '../data-source';
 import { TypeORMError } from 'typeorm';
 import { Product } from '../model/Product';
 import { Representation } from '../model/Representation';
+import { IProduct } from '../entity/Product';
 
 export class ProductController {
   async index(req: Request, res: Response) {
@@ -44,26 +45,29 @@ export class ProductController {
 
     const payload = req.body;
 
-    const product = new Product();
-    product.description = payload.product.description;
-    product.measure = payload.product.measure;
-    product.weight = payload.product.weight;
-    product.price = payload.product.price;
-    product.priceOut = payload.product.priceOut;
-    product.types = payload.product.types;
-
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
 
       const representation = (await new Representation().findOne(
         runner,
-        payload.representation,
+        payload.product.representation,
       )) as Representation;
-      product.representation = representation.toAttributes;
+      const product: IProduct = {
+        id: 0,
+        description: payload.product.description,
+        measure: payload.product.measure,
+        weight: payload.product.weight,
+        price: payload.product.price,
+        priceOut: payload.product.priceOut,
+        types: payload.product.types,
+        representation: representation.toAttributes,
+      };
+
+      const model = new Product(product);
 
       await runner.startTransaction();
-      const response = await product.save(runner);
+      const response = await model.save(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();
         await runner.release();
@@ -100,7 +104,7 @@ export class ProductController {
 
       const representation = (await new Representation().findOne(
         runner,
-        payload.representation,
+        payload.product.representation,
       )) as Representation;
 
       product.description = payload.product.description;

@@ -115,7 +115,7 @@ export class Product implements IProduct {
     if (this.attributes.id <= 0) return 'registro invalido';
 
     try {
-      const entity = await runner.manager.remove(this.attributes);
+      const entity = await runner.manager.remove(ProductEntity, this.attributes);
 
       return entity ? '' : 'erro ao remover o produto.';
     } catch (e) {
@@ -126,7 +126,7 @@ export class Product implements IProduct {
   }
 
   async findOne(runner: QueryRunner, id: number) {
-    if (this.attributes.id <= 0) return undefined;
+    if (id <= 0) return undefined;
 
     try {
       const entity = await runner.manager.findOne(ProductEntity, {
