@@ -96,7 +96,6 @@ export class ClientController {
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
     const client = (await new Client().findOne(runner, id)) as Client;
-    client.register = req.body.client.register;
     client.person.contact.phone = req.body.contact.phone;
     client.person.contact.cellphone = req.body.contact.cellphone;
     client.person.contact.email = req.body.contact.email;

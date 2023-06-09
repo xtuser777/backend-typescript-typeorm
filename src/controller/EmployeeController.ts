@@ -58,6 +58,8 @@ export class EmployeeController {
 
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();
+    console.log(req.body.employee);
+
     const level = (await new Level().findOne(runner, req.body.employee.level)) as Level;
     employee.level = level;
     await runner.startTransaction();

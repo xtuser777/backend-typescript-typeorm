@@ -96,8 +96,11 @@ export class Employee implements IEmployee {
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
       return 'tipo de funcionário inválido.';
-    if (this.attributes.login.length < 3) return 'login inválido.';
-    if (!this._password || (this._password && this._password.length < 6))
+    if (this.type == 1 && this.attributes.login.length < 3) return 'login inválido.';
+    if (
+      this.type == 1 &&
+      (!this._password || (this._password && this._password.length < 6))
+    )
       return 'senha inválida.';
     if (this.attributes.admission.length < 10) return 'data de admissão inválida.';
     if (this.attributes.level.id <= 0) return 'nível de funcionário inválido.';
@@ -131,6 +134,7 @@ export class Employee implements IEmployee {
 
     if (this._password)
       this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
+    else this.attributes.passwordHash = '';
 
     try {
       const response = await runner.manager.save(EmployeeEntity, this.attributes);
@@ -153,7 +157,7 @@ export class Employee implements IEmployee {
       return 'operação incorreta.';
     if (this.attributes.type <= 0 || this.attributes.type > 2)
       return 'tipo de funcionário inválido.';
-    if (this.attributes.login.length < 3) return 'login inválido.';
+    if (this.type == 1 && this.attributes.login.length < 3) return 'login inválido.';
     if (this.attributes.admission.length < 10) return 'data de admissão inválida.';
     if (this.attributes.level.id <= 0) return 'nível de funcionário inválido.';
 
@@ -186,6 +190,7 @@ export class Employee implements IEmployee {
 
     if (this._password)
       this.attributes.passwordHash = await bcryptjs.hash(this._password, 8);
+    else this.attributes.passwordHash = '';
 
     try {
       const response = await runner.manager.save(EmployeeEntity, this.attributes);

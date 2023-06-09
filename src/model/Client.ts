@@ -174,7 +174,7 @@ export class Client implements IClient {
     if (this.attributes.id <= 0) return 'registro incorreto.';
 
     try {
-      const response = await runner.manager.remove(this.attributes);
+      const response = await runner.manager.remove(ClientEntity, this.attributes);
 
       return response ? '' : 'erro ao remover o cliente.';
     } catch (e) {
