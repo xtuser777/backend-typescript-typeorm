@@ -1,25 +1,5 @@
-import {
-  Column,
-  Entity,
-  EntitySchema,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm';
-import { IPerson, Person } from './Person';
-
-// @Entity()
-// export class Parameterization {
-//   @PrimaryColumn()
-//   public id!: number;
-
-//   @Column()
-//   public logotype!: string;
-
-//   @OneToOne(() => Person, { cascade: true })
-//   @JoinColumn()
-//   public person!: Person;
-// }
+import { EntitySchema } from 'typeorm';
+import { IPerson } from './Person';
 
 export interface IParameterization {
   id: number;
@@ -34,6 +14,13 @@ export const Parameterization = new EntitySchema<IParameterization>({
     logotype: { type: 'varchar', nullable: false },
   },
   relations: {
-    person: { type: 'one-to-one', target: 'person', joinColumn: true, cascade: true },
+    person: {
+      type: 'one-to-one',
+      target: 'person',
+      joinColumn: true,
+      cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
   },
 });

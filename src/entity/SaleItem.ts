@@ -26,7 +26,7 @@ export const SaleItem = new EntitySchema<ISaleItem>({
       nullable: false,
     },
     price: {
-      type: 'float',
+      type: 'decimal',
       nullable: false,
     },
   },

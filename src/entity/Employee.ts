@@ -1,44 +1,6 @@
-import {
-  Column,
-  Entity,
-  EntitySchema,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
-import { IPerson, Person } from './Person';
-import { ILevel, Level } from './Level';
-
-// @Entity()
-// @Unique(['login'])
-// export class Employee {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column('integer')
-//   public type!: number;
-
-//   @Column({ length: 10 })
-//   public login!: string;
-
-//   @Column({ length: 100 })
-//   public passwordHash!: string;
-
-//   @Column('date')
-//   public admission!: string;
-
-//   @Column('date', { nullable: true })
-//   public demission?: string;
-
-//   @OneToOne(() => Person, { cascade: true })
-//   @JoinColumn()
-//   public person!: Person;
-
-//   @ManyToOne(() => Level)
-//   public level!: Level;
-// }
+import { EntitySchema } from 'typeorm';
+import { IPerson } from './Person';
+import { ILevel } from './Level';
 
 export interface IEmployee {
   id: number;
@@ -62,7 +24,14 @@ export const Employee = new EntitySchema<IEmployee>({
     demission: { type: 'date', nullable: true },
   },
   relations: {
-    person: { type: 'one-to-one', target: 'person', joinColumn: true, cascade: true },
+    person: {
+      type: 'one-to-one',
+      target: 'person',
+      joinColumn: true,
+      cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
     level: { type: 'many-to-one', target: 'level' },
   },
 });

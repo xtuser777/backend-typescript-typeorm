@@ -6,7 +6,7 @@ import {
   IFreightBudget,
   FreightBudget as FreightBudgetEntity,
 } from '../entity/FreightBudget';
-import { IFreightBudgetItem } from '../entity/FreightBudgetItem';
+import { IFreightItem } from '../entity/FreightItem';
 import { IRepresentation } from '../entity/Representation';
 import { ISaleBudget } from '../entity/SaleBudget';
 import { ITruckType } from '../entity/TruckType';
@@ -116,10 +116,10 @@ export class FreightBudget implements IFreightBudget {
     this.attributes.author = v;
   }
 
-  get items(): IFreightBudgetItem[] {
+  get items(): IFreightItem[] {
     return this.attributes.items;
   }
-  set items(v: IFreightBudgetItem[]) {
+  set items(v: IFreightItem[]) {
     this.attributes.items = v;
   }
 

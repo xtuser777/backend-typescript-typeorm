@@ -59,6 +59,8 @@ export const Person = new EntitySchema<IPerson>({
       joinColumn: true,
       nullable: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     enterprise: {
       type: 'one-to-one',
@@ -66,12 +68,16 @@ export const Person = new EntitySchema<IPerson>({
       joinColumn: true,
       nullable: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     contact: {
       type: 'one-to-one',
       target: 'contact',
       joinColumn: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
   },
 });

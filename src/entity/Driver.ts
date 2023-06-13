@@ -50,12 +50,16 @@ export const Driver = new EntitySchema<IDriver>({
       target: 'person',
       joinColumn: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     bankData: {
       type: 'one-to-one',
       target: 'bank_data',
       joinColumn: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
   },
 });

@@ -5,7 +5,7 @@ import { IEmployee } from './Employee';
 import { IRepresentation } from './Representation';
 import { ISaleBudget } from './SaleBudget';
 import { ITruckType } from './TruckType';
-import { IFreightBudgetItem } from './FreightBudgetItem';
+import { IFreightItem } from './FreightItem';
 
 export interface IFreightBudget {
   id: number;
@@ -22,7 +22,7 @@ export interface IFreightBudget {
   truckType: ITruckType;
   destiny: ICity;
   author: IEmployee;
-  items: IFreightBudgetItem[];
+  items: IFreightItem[];
 }
 
 export const FreightBudget = new EntitySchema<IFreightBudget>({
@@ -45,9 +45,13 @@ export const FreightBudget = new EntitySchema<IFreightBudget>({
     destiny: { type: 'many-to-one', target: 'city' },
     author: { type: 'many-to-one', target: 'employee' },
     items: {
-      type: 'one-to-many',
-      target: 'freight_budget_item',
-      inverseSide: 'budget',
+      type: 'many-to-many',
+      target: 'freight_item',
+      joinTable: {
+        name: 'freight_budget_item',
+        joinColumn: { name: 'freight_budget', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'freight_item', referencedColumnName: 'id' },
+      },
       cascade: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',

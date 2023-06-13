@@ -3,7 +3,7 @@ import { AppDataSource } from '../data-source';
 import { FreightBudget } from '../model/FreightBudget';
 import { TypeORMError } from 'typeorm';
 import { ActiveUser } from '../util/active-user';
-import { IFreightBudgetItem } from '../entity/FreightBudgetItem';
+import { IFreightItem } from '../entity/FreightItem';
 import { City } from '../model/City';
 import { Client } from '../model/Client';
 import { Employee } from '../model/Employee';
@@ -49,7 +49,7 @@ export class FreightBudgetController {
       return res.status(400).json('requisição sem corpo.');
     const activeUser = ActiveUser.getInstance() as ActiveUser;
     const payload = req.body;
-    const items: IFreightBudgetItem[] = payload.budget.items;
+    const items: IFreightItem[] = payload.budget.items;
     const destiny = await new City().findOne(payload.budget.destiny);
     const runner = AppDataSource.createQueryRunner();
     try {
@@ -98,7 +98,7 @@ export class FreightBudgetController {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('requisição sem corpo.');
     const payload = req.body;
-    const items: IFreightBudgetItem[] = payload.budget.items;
+    const items: IFreightItem[] = payload.budget.items;
     const destiny = (await new City().findOne(payload.budget.destiny)) as City;
     const runner = AppDataSource.createQueryRunner();
     try {

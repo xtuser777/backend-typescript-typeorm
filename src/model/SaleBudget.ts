@@ -218,7 +218,44 @@ export class SaleBudget implements ISaleBudget {
     if (id <= 0) return undefined;
 
     try {
-      const entity = await runner.manager.findOne(SaleBudgetEntity, { where: { id } });
+      const entity = await runner.manager.findOne(SaleBudgetEntity, {
+        where: { id },
+        relations: {
+          client: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+          },
+          salesman: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+            },
+            level: true,
+          },
+          destiny: { state: true },
+          author: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+            },
+            level: true,
+          },
+          items: {
+            product: {
+              representation: {
+                person: {
+                  enterprise: true,
+                  contact: { address: { city: { state: true } } },
+                },
+              },
+              types: true,
+            },
+          },
+        },
+      });
 
       return entity ? new SaleBudget(entity) : undefined;
     } catch (e) {
@@ -230,7 +267,32 @@ export class SaleBudget implements ISaleBudget {
 
   async find(runner: QueryRunner) {
     try {
-      const entities = await runner.manager.find(SaleBudgetEntity);
+      const entities = await runner.manager.find(SaleBudgetEntity, {
+        relations: {
+          client: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+          },
+          salesman: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+            },
+            level: true,
+          },
+          destiny: { state: true },
+          author: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+            },
+            level: true,
+          },
+        },
+      });
       const budgets: SaleBudget[] = [];
       for (const entity of entities) budgets.push(new SaleBudget(entity));
 

@@ -8,7 +8,9 @@ import { Employee } from '../model/Employee';
 import { Client } from '../model/Client';
 import { City } from '../model/City';
 import { ActiveUser } from '../util/active-user';
-import { ISaleItem } from '../entity/SaleItem';
+import { ISaleItem, SaleItem } from '../entity/SaleItem';
+import { ICity } from '../entity/City';
+import { IClient } from '../entity/Client';
 
 export class SaleBudgetController {
   index = async (req: Request, res: Response) => {
@@ -90,7 +92,9 @@ export class SaleBudgetController {
       return res.status(400).json('requisição sem corpo.');
     const payload = req.body;
     const items: ISaleItem[] = payload.budget.items;
-    const destiny = (await new City().findOne(payload.budget.destiny)) as City;
+    const destiny: ICity = payload.budget.destiny;
+    const salesman: IEmployee | undefined = payload.budget.salesman;
+    const client: IClient | undefined = payload.budget.client;
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
@@ -99,8 +103,6 @@ export class SaleBudgetController {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
       }
-      const salesman = await new Employee().findOne(runner, payload.budget.salesman);
-      const client = await new Client().findOne(runner, payload.budget.client);
       budget.description = payload.budget.description;
       budget.clientName = payload.budget.clientName;
       budget.clientDocument = payload.budget.clientDocument;
@@ -110,9 +112,16 @@ export class SaleBudgetController {
       budget.weight = payload.budget.weight;
       budget.value = payload.budget.value;
       budget.validate = payload.budget.validate;
-      budget.salesman = salesman?.toAttributes;
-      budget.client = client?.toAttributes;
-      budget.destiny = destiny.toAttributes;
+      budget.salesman = salesman;
+      budget.client = client;
+      budget.destiny = destiny;
+      await runner.startTransaction();
+      for (const item of budget.items) {
+        console.log(item);
+
+        await runner.manager.query('delete from sale_item where id = ?', [item.id]);
+      }
+      await runner.commitTransaction();
       budget.items = items;
       await runner.startTransaction();
       const response = await budget.update(runner);

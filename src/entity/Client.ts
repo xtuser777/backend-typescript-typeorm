@@ -1,25 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-  EntitySchema,
-} from 'typeorm';
-import { IPerson, Person } from './Person';
-
-// @Entity()
-// export class Client {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column({ length: 10 })
-//   public register!: string;
-
-//   @OneToOne(() => Person, { cascade: true })
-//   @JoinColumn()
-//   public person!: Person;
-// }
+import { EntitySchema } from 'typeorm';
+import { IPerson } from './Person';
 
 export interface IClient {
   id: number;
@@ -34,6 +14,13 @@ export const Client = new EntitySchema<IClient>({
     register: { type: 'varchar', length: 10, nullable: false },
   },
   relations: {
-    person: { type: 'one-to-one', target: 'person', joinColumn: true, cascade: true },
+    person: {
+      type: 'one-to-one',
+      target: 'person',
+      joinColumn: true,
+      cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
   },
 });

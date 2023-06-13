@@ -65,6 +65,8 @@ export const Contact = new EntitySchema<IContact>({
       target: 'address',
       joinColumn: true,
       cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
   },
 });

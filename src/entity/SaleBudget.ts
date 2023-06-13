@@ -35,7 +35,7 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
     clientCellphone: { type: 'varchar', length: 15, nullable: false },
     clientEmail: { type: 'varchar', length: 80, nullable: false },
     weight: { type: 'float', nullable: false },
-    value: { type: 'float', nullable: false },
+    value: { type: 'decimal', nullable: false },
     validate: { type: 'date', nullable: false },
   },
   relations: {

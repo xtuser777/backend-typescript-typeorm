@@ -6,23 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IPerson, Person } from './Person';
-
-// @Entity('representation')
-// export class Representation {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column('date')
-//   public register!: string;
-
-//   @Column({ length: 40 })
-//   public unity!: string;
-
-//   @OneToOne(() => Person, { cascade: true })
-//   @JoinColumn()
-//   public person!: Person;
-// }
+import { IPerson } from './Person';
 
 export interface IRepresentation {
   id: number;
@@ -39,6 +23,13 @@ export const Representation = new EntitySchema<IRepresentation>({
     unity: { type: 'varchar', length: 40, nullable: false },
   },
   relations: {
-    person: { type: 'one-to-one', target: 'person', joinColumn: true, cascade: true },
+    person: {
+      type: 'one-to-one',
+      target: 'person',
+      joinColumn: true,
+      cascade: true,
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
   },
 });

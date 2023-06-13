@@ -24,7 +24,7 @@ import { BillPayCategory } from './entity/BillPayCategory';
 import { SaleBudget } from './entity/SaleBudget';
 import { SaleItem } from './entity/SaleItem';
 import { FreightBudget } from './entity/FreightBudget';
-import { FreightBudgetItem } from './entity/FreightBudgetItem';
+import { FreightItem } from './entity/FreightItem';
 
 dotenv.config();
 
@@ -60,7 +60,7 @@ export const AppDataSource = new DataSource({
     BillPayCategory,
     SaleItem,
     SaleBudget,
-    FreightBudgetItem,
+    FreightItem,
     FreightBudget,
   ],
   migrations: [],
