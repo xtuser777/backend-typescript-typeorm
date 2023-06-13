@@ -22,7 +22,7 @@ import { Product } from './entity/Product';
 import { PaymentForm } from './entity/PaymentForm';
 import { BillPayCategory } from './entity/BillPayCategory';
 import { SaleBudget } from './entity/SaleBudget';
-import { SaleBudgetItem } from './entity/SaleBudgetItem';
+import { SaleItem } from './entity/SaleItem';
 import { FreightBudget } from './entity/FreightBudget';
 import { FreightBudgetItem } from './entity/FreightBudgetItem';
 
@@ -58,7 +58,7 @@ export const AppDataSource = new DataSource({
     Product,
     PaymentForm,
     BillPayCategory,
-    SaleBudgetItem,
+    SaleItem,
     SaleBudget,
     FreightBudgetItem,
     FreightBudget,

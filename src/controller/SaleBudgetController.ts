@@ -8,7 +8,7 @@ import { Employee } from '../model/Employee';
 import { Client } from '../model/Client';
 import { City } from '../model/City';
 import { ActiveUser } from '../util/active-user';
-import { ISaleBudgetItem } from '../entity/SaleBudgetItem';
+import { ISaleItem } from '../entity/SaleItem';
 
 export class SaleBudgetController {
   index = async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ export class SaleBudgetController {
       return res.status(400).json('requisição sem corpo.');
     const activeUser = ActiveUser.getInstance() as ActiveUser;
     const payload = req.body;
-    const items: ISaleBudgetItem[] = payload.budget.items;
+    const items: ISaleItem[] = payload.budget.items;
     const destiny = await new City().findOne(payload.budget.destiny);
     const runner = AppDataSource.createQueryRunner();
     try {
@@ -89,7 +89,7 @@ export class SaleBudgetController {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('requisição sem corpo.');
     const payload = req.body;
-    const items: ISaleBudgetItem[] = payload.budget.items;
+    const items: ISaleItem[] = payload.budget.items;
     const destiny = (await new City().findOne(payload.budget.destiny)) as City;
     const runner = AppDataSource.createQueryRunner();
     try {

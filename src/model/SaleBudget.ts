@@ -3,7 +3,7 @@ import { ICity } from '../entity/City';
 import { IClient } from '../entity/Client';
 import { IEmployee } from '../entity/Employee';
 import { ISaleBudget, SaleBudget as SaleBudgetEntity } from '../entity/SaleBudget';
-import { ISaleBudgetItem } from '../entity/SaleBudgetItem';
+import { ISaleItem } from '../entity/SaleItem';
 
 export class SaleBudget implements ISaleBudget {
   private attributes!: ISaleBudget;
@@ -117,10 +117,10 @@ export class SaleBudget implements ISaleBudget {
     this.attributes.author = v;
   }
 
-  get items(): ISaleBudgetItem[] {
+  get items(): ISaleItem[] {
     return this.attributes.items;
   }
-  set items(v: ISaleBudgetItem[]) {
+  set items(v: ISaleItem[]) {
     this.attributes.items = v;
   }
 

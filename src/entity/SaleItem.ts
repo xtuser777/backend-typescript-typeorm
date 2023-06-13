@@ -1,18 +1,16 @@
 import { EntitySchema } from 'typeorm';
 import { IProduct } from './Product';
-import { ISaleBudget } from './SaleBudget';
 
-export interface ISaleBudgetItem {
+export interface ISaleItem {
   id: number;
-  budget: ISaleBudget;
   product: IProduct;
   quantity: number;
   weight: number;
   price: number;
 }
 
-export const SaleBudgetItem = new EntitySchema<ISaleBudgetItem>({
-  name: 'sale_budget_item',
+export const SaleItem = new EntitySchema<ISaleItem>({
+  name: 'sale_item',
   columns: {
     id: {
       type: 'integer',
@@ -33,15 +31,6 @@ export const SaleBudgetItem = new EntitySchema<ISaleBudgetItem>({
     },
   },
   relations: {
-    budget: {
-      type: 'many-to-one',
-      target: 'sale_budget',
-      joinColumn: {
-        name: 'budgetId',
-      },
-      inverseSide: 'items',
-      primary: true,
-    },
     product: {
       type: 'many-to-one',
       target: 'product',

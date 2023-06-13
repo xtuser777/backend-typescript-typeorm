@@ -2,7 +2,7 @@ import { EntitySchema } from 'typeorm';
 import { ICity } from './City';
 import { IClient } from './Client';
 import { IEmployee } from './Employee';
-import { ISaleBudgetItem } from './SaleBudgetItem';
+import { ISaleItem } from './SaleItem';
 
 export interface ISaleBudget {
   id: number;
@@ -20,7 +20,7 @@ export interface ISaleBudget {
   client?: IClient;
   destiny: ICity;
   author: IEmployee;
-  items: ISaleBudgetItem[];
+  items: ISaleItem[];
 }
 
 export const SaleBudget = new EntitySchema<ISaleBudget>({
@@ -70,9 +70,13 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       },
     },
     items: {
-      type: 'one-to-many',
-      target: 'sale_budget_item',
-      inverseSide: 'budget',
+      type: 'many-to-many',
+      target: 'sale_item',
+      joinTable: {
+        name: 'sale_budget_item',
+        joinColumn: { name: 'sale_budget', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'sale_item', referencedColumnName: 'id' },
+      },
       cascade: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
