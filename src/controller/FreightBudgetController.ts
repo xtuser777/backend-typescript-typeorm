@@ -50,26 +50,23 @@ export class FreightBudgetController {
     const activeUser = ActiveUser.getInstance() as ActiveUser;
     const payload = req.body;
     const items: IFreightItem[] = payload.budget.items;
-    const destiny = await new City().findOne(payload.budget.destiny);
+    const destiny = payload.budget.destiny;
+    const sale = payload.budget.saleBudget;
+    const representation = payload.budget.representation;
+    const client = payload.budget.client;
+    const truckType = payload.budget.truckType;
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const sale = await new SaleBudget().findOne(runner, payload.budget.saleBudget);
-      const representation = await new Representation().findOne(
-        runner,
-        payload.budget.representation,
-      );
-      const client = await new Client().findOne(runner, payload.budget.client);
-      const truckType = await new TruckType().findOne(runner, payload.budget.truckType);
       const author = await new Employee().findOne(runner, activeUser.getId());
       const budget: IFreightBudget = {
         id: 0,
         ...payload.budget,
-        sale: sale?.toAttributes,
-        representation: representation?.toAttributes,
-        client: client?.toAttributes,
-        truckType: truckType?.toAttributes,
-        destiny: destiny?.toAttributes,
+        sale: sale,
+        representation: representation,
+        client: client,
+        truckType: truckType,
+        destiny: destiny,
         author: author?.toAttributes,
         items,
       };
@@ -99,7 +96,11 @@ export class FreightBudgetController {
       return res.status(400).json('requisição sem corpo.');
     const payload = req.body;
     const items: IFreightItem[] = payload.budget.items;
-    const destiny = (await new City().findOne(payload.budget.destiny)) as City;
+    const destiny = payload.budget.destiny;
+    const sale = payload.budget.saleBudget;
+    const representation = payload.budget.representation;
+    const client = payload.budget.client;
+    const truckType = payload.budget.truckType;
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
@@ -108,30 +109,22 @@ export class FreightBudgetController {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
       }
-      const sale = await new SaleBudget().findOne(runner, payload.budget.saleBudget);
-      const representation = (await new Representation().findOne(
-        runner,
-        payload.budget.representation,
-      )) as Representation;
-      const client = (await new Client().findOne(
-        runner,
-        payload.budget.client,
-      )) as Client;
-      const truckType = (await new TruckType().findOne(
-        runner,
-        payload.budget.truckType,
-      )) as TruckType;
       budget.description = payload.budget.description;
       budget.distance = payload.budget.distance;
       budget.weight = payload.budget.weight;
       budget.value = payload.budget.value;
       budget.shipping = payload.budget.shipping;
       budget.validate = payload.budget.validate;
-      budget.saleBudget = sale?.toAttributes;
-      budget.representation = representation?.toAttributes;
-      budget.client = client?.toAttributes;
-      budget.truckType = truckType.toAttributes;
-      budget.destiny = destiny.toAttributes;
+      budget.saleBudget = sale;
+      budget.representation = representation;
+      budget.client = client;
+      budget.truckType = truckType;
+      budget.destiny = destiny;
+      await runner.startTransaction();
+      for (const item of budget.items) {
+        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+      }
+      await runner.commitTransaction();
       budget.items = items;
       await runner.startTransaction();
       const response = await budget.update(runner);
@@ -162,6 +155,11 @@ export class FreightBudgetController {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
       }
+      await runner.startTransaction();
+      for (const item of budget.items) {
+        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+      }
+      await runner.commitTransaction();
       await runner.startTransaction();
       const response = await budget.delete(runner);
       if (response.length > 0) {

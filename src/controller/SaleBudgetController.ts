@@ -117,8 +117,6 @@ export class SaleBudgetController {
       budget.destiny = destiny;
       await runner.startTransaction();
       for (const item of budget.items) {
-        console.log(item);
-
         await runner.manager.query('delete from sale_item where id = ?', [item.id]);
       }
       await runner.commitTransaction();
@@ -152,6 +150,11 @@ export class SaleBudgetController {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
       }
+      await runner.startTransaction();
+      for (const item of budget.items) {
+        await runner.manager.query('delete from sale_item where id = ?', [item.id]);
+      }
+      await runner.commitTransaction();
       await runner.startTransaction();
       const response = await budget.delete(runner);
       if (response.length > 0) {
