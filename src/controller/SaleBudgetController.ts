@@ -8,7 +8,7 @@ import { Employee } from '../model/Employee';
 import { Client } from '../model/Client';
 import { City } from '../model/City';
 import { ActiveUser } from '../util/active-user';
-import { ISaleItem, SaleItem } from '../entity/SaleItem';
+import { ISaleItem } from '../entity/SaleItem';
 import { ICity } from '../entity/City';
 import { IClient } from '../entity/Client';
 
@@ -18,6 +18,7 @@ export class SaleBudgetController {
     try {
       await runner.connect();
       const budgets = await new SaleBudget().find(runner);
+      await runner.release();
       const response = [];
       for (const budget of budgets) response.push(budget.toAttributes);
 
@@ -36,6 +37,7 @@ export class SaleBudgetController {
     try {
       await runner.connect();
       const budget = await new SaleBudget().findOne(runner, id);
+      await runner.release();
 
       return res.json(budget ? budget.toAttributes : undefined);
     } catch (e) {

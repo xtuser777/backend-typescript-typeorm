@@ -4,13 +4,8 @@ import { FreightBudget } from '../model/FreightBudget';
 import { TypeORMError } from 'typeorm';
 import { ActiveUser } from '../util/active-user';
 import { IFreightItem } from '../entity/FreightItem';
-import { City } from '../model/City';
-import { Client } from '../model/Client';
 import { Employee } from '../model/Employee';
 import { IFreightBudget } from '../entity/FreightBudget';
-import { SaleBudget } from '../model/SaleBudget';
-import { Representation } from '../model/Representation';
-import { TruckType } from '../model/TruckType';
 
 export class FreightBudgetController {
   index = async (req: Request, res: Response) => {
