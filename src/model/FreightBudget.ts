@@ -81,10 +81,10 @@ export class FreightBudget implements IFreightBudget {
     this.attributes.saleBudget = v;
   }
 
-  get representation(): IRepresentation {
+  get representation(): IRepresentation | undefined {
     return this.attributes.representation;
   }
-  set representation(v: IRepresentation) {
+  set representation(v: IRepresentation | undefined) {
     this.attributes.representation = v;
   }
 
@@ -137,7 +137,6 @@ export class FreightBudget implements IFreightBudget {
     if (this.attributes.value <= 0) return 'valor do orçamento inválido.';
     if (this.attributes.shipping.length < 10) return 'data de entrega inválida.';
     if (this.attributes.validate.length < 10) return 'data de validade inválida.';
-    if (this.attributes.representation.id <= 0) return 'representação inválida.';
     if (this.attributes.client.id <= 0) return 'cliente inválido.';
     if (this.attributes.truckType.id <= 0) return 'tipo de caminhão inválido.';
     if (this.attributes.destiny.id <= 0) return 'cidade de destino inválida.';
@@ -161,7 +160,6 @@ export class FreightBudget implements IFreightBudget {
     if (this.attributes.value <= 0) return 'valor do orçamento inválido.';
     if (this.attributes.shipping.length < 10) return 'data de entrega inválida.';
     if (this.attributes.validate.length < 10) return 'data de validade inválida.';
-    if (this.attributes.representation.id <= 0) return 'representação inválida.';
     if (this.attributes.client.id <= 0) return 'cliente inválido.';
     if (this.attributes.truckType.id <= 0) return 'tipo de caminhão inválido.';
     if (this.attributes.destiny.id <= 0) return 'cidade de destino inválida.';
@@ -193,7 +191,41 @@ export class FreightBudget implements IFreightBudget {
     if (id <= 0) return undefined;
 
     try {
-      const entity = await runner.manager.findOne(FreightBudgetEntity, { where: { id } });
+      const entity = await runner.manager.findOne(FreightBudgetEntity, {
+        where: { id },
+        relations: {
+          saleBudget: true,
+          representation: true,
+          client: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+          },
+          destiny: { state: true },
+          truckType: true,
+          author: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+            level: true,
+          },
+          items: {
+            product: {
+              representation: {
+                person: {
+                  enterprise: true,
+                  contact: { address: { city: { state: true } } },
+                },
+              },
+              types: true,
+            },
+          },
+        },
+      });
 
       return entity ? new FreightBudget(entity) : undefined;
     } catch (e) {
@@ -205,7 +237,29 @@ export class FreightBudget implements IFreightBudget {
 
   async find(runner: QueryRunner) {
     try {
-      const entities = await runner.manager.find(FreightBudgetEntity);
+      const entities = await runner.manager.find(FreightBudgetEntity, {
+        relations: {
+          saleBudget: true,
+          representation: true,
+          client: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+          },
+          destiny: { state: true },
+          truckType: true,
+          author: {
+            person: {
+              contact: { address: { city: { state: true } } },
+              individual: true,
+              enterprise: true,
+            },
+            level: true,
+          },
+        },
+      });
       const budgets: FreightBudget[] = [];
       for (const entity of entities) budgets.push(new FreightBudget(entity));
 

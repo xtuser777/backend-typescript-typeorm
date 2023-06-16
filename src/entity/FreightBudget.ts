@@ -17,7 +17,7 @@ export interface IFreightBudget {
   shipping: string;
   validate: string;
   saleBudget?: ISaleBudget;
-  representation: IRepresentation;
+  representation?: IRepresentation;
   client: IClient;
   truckType: ITruckType;
   destiny: ICity;
