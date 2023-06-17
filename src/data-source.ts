@@ -25,6 +25,7 @@ import { SaleBudget } from './entity/SaleBudget';
 import { SaleItem } from './entity/SaleItem';
 import { FreightBudget } from './entity/FreightBudget';
 import { FreightItem } from './entity/FreightItem';
+import { SaleOrder } from './entity/SaleOrder';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ export const AppDataSource = new DataSource({
     SaleBudget,
     FreightItem,
     FreightBudget,
+    SaleOrder,
   ],
   migrations: [],
   subscribers: [],

@@ -2,58 +2,53 @@ import { EntitySchema } from 'typeorm';
 import { ICity } from './City';
 import { IClient } from './Client';
 import { IEmployee } from './Employee';
-import { IRepresentation } from './Representation';
+import { IPaymentForm } from './PaymentForm';
 import { ISaleBudget } from './SaleBudget';
+import { ISaleItem } from './SaleItem';
 import { ITruckType } from './TruckType';
-import { IFreightItem } from './FreightItem';
 
-export interface IFreightBudget {
+export interface ISaleOrder {
   id: number;
-  description: string;
   date: string;
-  distance: number;
+  description: string;
   weight: number;
   value: number;
-  shipping: string;
-  validate: string;
-  saleBudget?: ISaleBudget;
-  representation?: IRepresentation;
-  client: IClient;
-  truckType: ITruckType;
+  salesman?: IEmployee;
   destiny: ICity;
+  budget?: ISaleBudget;
+  truckType: ITruckType;
+  client: IClient;
+  paymentForm: IPaymentForm;
   author: IEmployee;
-  items: IFreightItem[];
+  items: ISaleItem[];
 }
 
-export const FreightBudget = new EntitySchema<IFreightBudget>({
-  name: 'freight_budget',
+export const SaleOrder = new EntitySchema<ISaleOrder>({
+  name: 'sale_order',
   columns: {
     id: { type: 'integer', primary: true, generated: 'increment' },
     date: { type: 'date', nullable: false },
-    description: { type: 'varchar', length: 70, nullable: false },
-    distance: { type: 'integer', nullable: false },
+    description: { type: 'varchar', length: 150, nullable: false },
     weight: { type: 'decimal', precision: 10, scale: 2, nullable: false },
     value: { type: 'decimal', precision: 10, scale: 2, nullable: false },
-    shipping: { type: 'date', nullable: false },
-    validate: { type: 'date', nullable: false },
   },
   relations: {
-    saleBudget: {
+    salesman: {
+      type: 'many-to-one',
+      target: 'employee',
+      joinColumn: { name: 'salesman_id' },
+      nullable: true,
+    },
+    budget: {
       type: 'many-to-one',
       target: 'sale_budget',
       joinColumn: { name: 'sale_budget_id' },
       nullable: true,
     },
-    representation: {
+    destiny: {
       type: 'many-to-one',
-      target: 'representation',
-      joinColumn: { name: 'representation_id' },
-      nullable: true,
-    },
-    client: {
-      type: 'many-to-one',
-      target: 'client',
-      joinColumn: { name: 'client_id' },
+      target: 'city',
+      joinColumn: { name: 'destiny_id' },
       nullable: false,
     },
     truckType: {
@@ -62,10 +57,16 @@ export const FreightBudget = new EntitySchema<IFreightBudget>({
       joinColumn: { name: 'truck_type_id' },
       nullable: false,
     },
-    destiny: {
+    client: {
       type: 'many-to-one',
-      target: 'city',
-      joinColumn: { name: 'destiny_id' },
+      target: 'client',
+      joinColumn: { name: 'client_id' },
+      nullable: false,
+    },
+    paymentForm: {
+      type: 'many-to-one',
+      target: 'payment_form',
+      joinColumn: { name: 'payment_form_id' },
       nullable: false,
     },
     author: {
@@ -76,11 +77,11 @@ export const FreightBudget = new EntitySchema<IFreightBudget>({
     },
     items: {
       type: 'many-to-many',
-      target: 'freight_item',
+      target: 'sale_item',
       joinTable: {
-        name: 'freight_budget_item',
-        joinColumn: { name: 'freight_budget_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'freight_item_id', referencedColumnName: 'id' },
+        name: 'sale_order_item',
+        joinColumn: { name: 'sale_order_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'sale_item_id', referencedColumnName: 'id' },
       },
       cascade: true,
       onDelete: 'CASCADE',

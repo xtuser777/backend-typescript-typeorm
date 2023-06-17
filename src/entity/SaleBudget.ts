@@ -34,8 +34,8 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
     clientPhone: { type: 'varchar', length: 14, nullable: false },
     clientCellphone: { type: 'varchar', length: 15, nullable: false },
     clientEmail: { type: 'varchar', length: 80, nullable: false },
-    weight: { type: 'float', nullable: false },
-    value: { type: 'decimal', nullable: false },
+    weight: { type: 'decimal', precision: 10, scale: 2, nullable: false },
+    value: { type: 'decimal', precision: 10, scale: 2, nullable: false },
     validate: { type: 'date', nullable: false },
   },
   relations: {
@@ -43,7 +43,7 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       type: 'many-to-one',
       target: 'employee',
       joinColumn: {
-        name: 'employeeId',
+        name: 'salesman_id',
       },
       nullable: true,
     },
@@ -51,7 +51,7 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       type: 'many-to-one',
       target: 'client',
       joinColumn: {
-        name: 'clientId',
+        name: 'client_id',
       },
       nullable: true,
     },
@@ -59,14 +59,14 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       type: 'many-to-one',
       target: 'city',
       joinColumn: {
-        name: 'cityId',
+        name: 'destiny_id',
       },
     },
     author: {
       type: 'many-to-one',
       target: 'employee',
       joinColumn: {
-        name: 'userId',
+        name: 'author_id',
       },
     },
     items: {
@@ -74,8 +74,8 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       target: 'sale_item',
       joinTable: {
         name: 'sale_budget_item',
-        joinColumn: { name: 'sale_budget', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'sale_item', referencedColumnName: 'id' },
+        joinColumn: { name: 'sale_budget_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'sale_item_id', referencedColumnName: 'id' },
       },
       cascade: true,
       onDelete: 'CASCADE',
