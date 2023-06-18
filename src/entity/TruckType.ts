@@ -1,19 +1,4 @@
-import { Column, Entity, EntitySchema, PrimaryGeneratedColumn } from 'typeorm';
-
-// @Entity()
-// export class TruckType {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column({ length: 50 })
-//   public description!: string;
-
-//   @Column('integer')
-//   public axes!: number;
-
-//   @Column('float')
-//   public capacity!: number;
-// }
+import { EntitySchema } from 'typeorm';
 
 export interface ITruckType {
   id: number;
@@ -25,23 +10,9 @@ export interface ITruckType {
 export const TruckType = new EntitySchema<ITruckType>({
   name: 'truck_type',
   columns: {
-    id: {
-      type: 'integer',
-      primary: true,
-      generated: 'increment',
-    },
-    description: {
-      type: 'varchar',
-      length: 50,
-      nullable: false,
-    },
-    axes: {
-      type: 'integer',
-      nullable: false,
-    },
-    capacity: {
-      type: 'float',
-      nullable: false,
-    },
+    id: { type: 'integer', primary: true, generated: 'increment' },
+    description: { type: 'varchar', length: 50, nullable: false },
+    axes: { type: 'integer', nullable: false },
+    capacity: { type: 'decimal', precision: 10, scale: 2, nullable: false },
   },
 });

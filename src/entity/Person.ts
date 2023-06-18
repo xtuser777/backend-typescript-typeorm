@@ -1,35 +1,7 @@
-import {
-  Column,
-  Entity,
-  EntitySchema,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { EntitySchema } from 'typeorm';
 import { IIndividualPerson } from './IndividualPerson';
 import { IEnterprisePerson } from './EnterprisePerson';
 import { IContact } from './Contact';
-
-// @Entity()
-// export class Person {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column('integer')
-//   public type!: number;
-
-//   @OneToOne(() => IndividualPerson, { cascade: true, nullable: true })
-//   @JoinColumn()
-//   public individual?: IndividualPerson;
-
-//   @OneToOne(() => EnterprisePerson, { cascade: true, nullable: true })
-//   @JoinColumn()
-//   public enterprise?: EnterprisePerson;
-
-//   @OneToOne(() => Contact, { cascade: true })
-//   @JoinColumn()
-//   public contact!: Contact;
-// }
 
 export interface IPerson {
   id: number;
@@ -42,21 +14,14 @@ export interface IPerson {
 export const Person = new EntitySchema<IPerson>({
   name: 'person',
   columns: {
-    id: {
-      type: 'integer',
-      primary: true,
-      generated: 'increment',
-    },
-    type: {
-      type: 'integer',
-      nullable: false,
-    },
+    id: { type: 'integer', primary: true, generated: 'increment' },
+    type: { type: 'integer', nullable: false },
   },
   relations: {
     individual: {
       type: 'one-to-one',
       target: 'individual_person',
-      joinColumn: true,
+      joinColumn: { name: 'individual_person_id' },
       nullable: true,
       cascade: true,
       onUpdate: 'CASCADE',
@@ -65,7 +30,7 @@ export const Person = new EntitySchema<IPerson>({
     enterprise: {
       type: 'one-to-one',
       target: 'enterprise_person',
-      joinColumn: true,
+      joinColumn: { name: 'enterprise_person_id' },
       nullable: true,
       cascade: true,
       onUpdate: 'CASCADE',
@@ -74,7 +39,7 @@ export const Person = new EntitySchema<IPerson>({
     contact: {
       type: 'one-to-one',
       target: 'contact',
-      joinColumn: true,
+      joinColumn: { name: 'contact_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',

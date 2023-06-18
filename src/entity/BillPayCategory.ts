@@ -8,15 +8,7 @@ export interface IBillPayCategory {
 export const BillPayCategory = new EntitySchema<IBillPayCategory>({
   name: 'bill_pay_category',
   columns: {
-    id: {
-      type: 'integer',
-      primary: true,
-      generated: 'increment',
-    },
-    description: {
-      type: 'varchar',
-      length: 40,
-      nullable: false,
-    },
+    id: { type: 'integer', primary: true, generated: 'increment' },
+    description: { type: 'varchar', length: 40, nullable: false },
   },
 });

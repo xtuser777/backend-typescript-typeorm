@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  EntitySchema,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { EntitySchema } from 'typeorm';
 import { IPerson } from './Person';
 
 export interface IRepresentation {
@@ -26,7 +19,7 @@ export const Representation = new EntitySchema<IRepresentation>({
     person: {
       type: 'one-to-one',
       target: 'person',
-      joinColumn: true,
+      joinColumn: { name: 'person_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',

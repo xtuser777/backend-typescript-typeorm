@@ -1,33 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-  EntitySchema,
-} from 'typeorm';
+import { EntitySchema } from 'typeorm';
 import { IPerson } from './Person';
 import { IBankData } from './BankData';
-
-// @Entity()
-// export class Driver {
-//   @PrimaryGeneratedColumn()
-//   public id!: number;
-
-//   @Column({ length: 10 })
-//   public register!: string;
-
-//   @Column({ length: 11 })
-//   public cnh!: string;
-
-//   @OneToOne(() => Person, { cascade: true })
-//   @JoinColumn()
-//   public person!: Person;
-
-//   @OneToOne(() => BankData, { cascade: true })
-//   @JoinColumn()
-//   public bankData!: BankData;
-// }
 
 export interface IDriver {
   id: number;
@@ -48,7 +21,7 @@ export const Driver = new EntitySchema<IDriver>({
     person: {
       type: 'one-to-one',
       target: 'person',
-      joinColumn: true,
+      joinColumn: { name: 'person_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
@@ -56,7 +29,7 @@ export const Driver = new EntitySchema<IDriver>({
     bankData: {
       type: 'one-to-one',
       target: 'bank_data',
-      joinColumn: true,
+      joinColumn: { name: 'bank_data_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',

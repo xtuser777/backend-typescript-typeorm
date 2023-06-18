@@ -19,7 +19,12 @@ export const Employee = new EntitySchema<IEmployee>({
     id: { type: 'integer', primary: true, generated: 'increment' },
     type: { type: 'integer', nullable: false },
     login: { type: 'varchar', length: 10, nullable: false, unique: true },
-    passwordHash: { type: 'varchar', length: 100, nullable: false },
+    passwordHash: {
+      name: 'password_hash',
+      type: 'varchar',
+      length: 100,
+      nullable: false,
+    },
     admission: { type: 'date', nullable: false },
     demission: { type: 'date', nullable: true },
   },
@@ -27,11 +32,11 @@ export const Employee = new EntitySchema<IEmployee>({
     person: {
       type: 'one-to-one',
       target: 'person',
-      joinColumn: true,
+      joinColumn: { name: 'person_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     },
-    level: { type: 'many-to-one', target: 'level' },
+    level: { type: 'many-to-one', target: 'level', joinColumn: { name: 'level_id' } },
   },
 });

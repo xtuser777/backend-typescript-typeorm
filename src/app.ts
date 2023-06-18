@@ -4,6 +4,7 @@ dotenv.config();
 
 import 'reflect-metadata';
 import express from 'express';
+import crypt from './routes/crypt';
 import city from './routes/city';
 import state from './routes/state';
 import token from './routes/token';
@@ -60,6 +61,7 @@ class App {
   }
 
   private routes() {
+    this.app.use('/crypt', crypt);
     this.app.use('/state', state);
     this.app.use('/city', city);
     this.app.use('/token', token);

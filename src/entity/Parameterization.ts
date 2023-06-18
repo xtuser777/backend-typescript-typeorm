@@ -17,7 +17,7 @@ export const Parameterization = new EntitySchema<IParameterization>({
     person: {
       type: 'one-to-one',
       target: 'person',
-      joinColumn: true,
+      joinColumn: { name: 'person_id' },
       cascade: true,
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
