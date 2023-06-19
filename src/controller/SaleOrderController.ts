@@ -70,7 +70,7 @@ export class SaleOrderController {
       }
       await runner.commitTransaction();
       await runner.release();
-      return res.json();
+      return res.json(response);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);

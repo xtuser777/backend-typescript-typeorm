@@ -18,7 +18,7 @@ export const Employee = new EntitySchema<IEmployee>({
   columns: {
     id: { type: 'integer', primary: true, generated: 'increment' },
     type: { type: 'integer', nullable: false },
-    login: { type: 'varchar', length: 10, nullable: false, unique: true },
+    login: { type: 'varchar', length: 10, nullable: false },
     passwordHash: {
       name: 'password_hash',
       type: 'varchar',

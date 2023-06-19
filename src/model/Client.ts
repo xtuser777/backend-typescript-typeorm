@@ -1,9 +1,11 @@
 import { QueryRunner, TypeORMError } from 'typeorm';
 import isEmail from 'validator/lib/isEmail';
 import { Client as ClientEntity, IClient } from '../entity/Client';
-import { IPerson } from '../entity/Person';
-import { IIndividualPerson } from '../entity/IndividualPerson';
-import { IEnterprisePerson } from '../entity/EnterprisePerson';
+import { IPerson, Person } from '../entity/Person';
+import { IIndividualPerson, IndividualPerson } from '../entity/IndividualPerson';
+import { EnterprisePerson, IEnterprisePerson } from '../entity/EnterprisePerson';
+import { Contact } from '../entity/Contact';
+import { Address } from '../entity/Address';
 
 export class Client implements IClient {
   private attributes!: IClient;
@@ -175,8 +177,36 @@ export class Client implements IClient {
 
     try {
       const response = await runner.manager.remove(ClientEntity, this.attributes);
+      if (!response) 'erro ao remover o cliente.';
 
-      return response ? '' : 'erro ao remover o cliente.';
+      const response1 = await runner.manager.remove(Person, this.attributes.person);
+      if (!response1) 'erro ao remover a pessoa.';
+
+      const response2 = await runner.manager.remove(
+        Contact,
+        this.attributes.person.contact,
+      );
+      if (!response2) 'erro ao remover o contato.';
+
+      if (this.attributes.person.type == 1) {
+        const response3 = await runner.manager.remove(
+          IndividualPerson,
+          this.attributes.person.individual,
+        );
+        if (!response3) 'erro ao remover a pessoa.';
+      } else {
+        const response3 = await runner.manager.remove(
+          EnterprisePerson,
+          this.attributes.person.enterprise,
+        );
+        if (!response3) 'erro ao remover a pessoa.';
+      }
+
+      const response4 = await runner.manager.remove(
+        Address,
+        this.attributes.person.contact.address,
+      );
+      return response4 ? '' : 'erro ao remover o endereço.';
     } catch (e) {
       console.error(e);
 

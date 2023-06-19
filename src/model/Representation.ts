@@ -1,11 +1,13 @@
 import { QueryRunner, TypeORMError } from 'typeorm';
-import { IPerson } from '../entity/Person';
+import { IPerson, Person } from '../entity/Person';
 import {
   IRepresentation,
   Representation as RepresentationEntity,
 } from '../entity/Representation';
 import isEmail from 'validator/lib/isEmail';
-import { IEnterprisePerson } from '../entity/EnterprisePerson';
+import { EnterprisePerson, IEnterprisePerson } from '../entity/EnterprisePerson';
+import { Contact } from '../entity/Contact';
+import { Address } from '../entity/Address';
 
 export class Representation implements IRepresentation {
   private attributes!: IRepresentation;
@@ -119,8 +121,28 @@ export class Representation implements IRepresentation {
 
     try {
       const response = await runner.manager.remove(RepresentationEntity, this.attributes);
+      if (!response) 'erro ao remover a representação.';
 
-      return response ? '' : 'erro ao remover a representação.';
+      const response1 = await runner.manager.remove(Person, this.attributes.person);
+      if (!response1) 'erro ao remover a pessoa.';
+
+      const response2 = await runner.manager.remove(
+        Contact,
+        this.attributes.person.contact,
+      );
+      if (!response2) 'erro ao remover o contato.';
+
+      const response3 = await runner.manager.remove(
+        EnterprisePerson,
+        this.attributes.person.enterprise,
+      );
+      if (!response3) 'erro ao remover a pessoa.';
+
+      const response4 = await runner.manager.remove(
+        Address,
+        this.attributes.person.contact.address,
+      );
+      return response4 ? '' : 'erro ao remover o endereço.';
     } catch (e) {
       console.log(e);
 

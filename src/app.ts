@@ -22,6 +22,7 @@ import paymentForm from './routes/payment-form';
 import billPayCategory from './routes/bill-pay-category';
 import saleBudget from './routes/sale-budget';
 import freightBudget from './routes/freight-budget';
+import saleOrder from './routes/sale-order';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -79,6 +80,7 @@ class App {
     this.app.use('/bill-pay-category', billPayCategory);
     this.app.use('/sale-budget', saleBudget);
     this.app.use('/freight-budget', freightBudget);
+    this.app.use('/sale-order', saleOrder);
   }
 }
 

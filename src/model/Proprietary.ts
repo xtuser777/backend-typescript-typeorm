@@ -1,10 +1,12 @@
 import { QueryRunner, TypeORMError } from 'typeorm';
 import { IDriver } from '../entity/Driver';
-import { IPerson } from '../entity/Person';
+import { IPerson, Person } from '../entity/Person';
 import { IProprietary, Proprietary as ProprietaryEntity } from '../entity/Proprietary';
-import { IIndividualPerson } from '../entity/IndividualPerson';
-import { IEnterprisePerson } from '../entity/EnterprisePerson';
+import { IIndividualPerson, IndividualPerson } from '../entity/IndividualPerson';
+import { EnterprisePerson, IEnterprisePerson } from '../entity/EnterprisePerson';
 import isEmail from 'validator/lib/isEmail';
+import { Contact } from '../entity/Contact';
+import { Address } from '../entity/Address';
 
 export class Proprietary implements IProprietary {
   private attributes!: IProprietary;
@@ -173,8 +175,36 @@ export class Proprietary implements IProprietary {
 
     try {
       const response = await runner.manager.save(ProprietaryEntity, this.attributes);
+      if (!response) 'erro ao remover o proprietário.';
 
-      return response ? '' : 'erro ao atualizar o proprietario';
+      const response1 = await runner.manager.remove(Person, this.attributes.person);
+      if (!response1) 'erro ao remover a pessoa.';
+
+      const response2 = await runner.manager.remove(
+        Contact,
+        this.attributes.person.contact,
+      );
+      if (!response2) 'erro ao remover o contato.';
+
+      if (this.attributes.person.type == 1) {
+        const response3 = await runner.manager.remove(
+          IndividualPerson,
+          this.attributes.person.individual,
+        );
+        if (!response3) 'erro ao remover a pessoa.';
+      } else {
+        const response3 = await runner.manager.remove(
+          EnterprisePerson,
+          this.attributes.person.enterprise,
+        );
+        if (!response3) 'erro ao remover a pessoa.';
+      }
+
+      const response4 = await runner.manager.remove(
+        Address,
+        this.attributes.person.contact.address,
+      );
+      return response4 ? '' : 'erro ao remover o endereço.';
     } catch (e) {
       console.error(e);
 
