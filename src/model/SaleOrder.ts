@@ -133,24 +133,41 @@ export class SaleOrder implements ISaleOrder {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'metodo inválido';
-    if (this.attributes.date.length < 10) return 'data de cadastro inválida.';
-    if (this.attributes.description.length < 2) return 'descrição do pedido inválida.';
-    if (this.attributes.weight <= 0) return 'peso total do pedido inválido.';
-    if (this.attributes.value <= 0) return 'valor total do pedido inválido.';
-    if (this.attributes.client.id <= 0) return 'cliente inválido.';
-    if (this.attributes.destiny.id <= 0) return 'cidade de destino inválida.';
-    if (this.attributes.truckType.id <= 0) return 'tipo de caminhao inválido.';
-    if (this.attributes.paymentForm.id <= 0) return 'forma de pagamento inválida';
-    if (this.attributes.author.id <= 0) return 'autor do cadastro inválido.';
-    if (this.attributes.items.length == 0) return 'não há itens.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'metodo inválido' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data de cadastro inválida.' };
+    if (this.attributes.description.length < 2)
+      return { success: false, insertedId: 0, message: 'descrição do pedido inválida.' };
+    if (this.attributes.weight <= 0)
+      return { success: false, insertedId: 0, message: 'peso total do pedido inválido.' };
+    if (this.attributes.value <= 0)
+      return {
+        success: false,
+        insertedId: 0,
+        message: 'valor total do pedido inválido.',
+      };
+    if (this.attributes.client.id <= 0)
+      return { success: false, insertedId: 0, message: 'cliente inválido.' };
+    if (this.attributes.destiny.id <= 0)
+      return { success: false, insertedId: 0, message: 'cidade de destino inválida.' };
+    if (this.attributes.truckType.id <= 0)
+      return { success: false, insertedId: 0, message: 'tipo de caminhao inválido.' };
+    if (this.attributes.paymentForm.id <= 0)
+      return { success: false, insertedId: 0, message: 'forma de pagamento inválida' };
+    if (this.attributes.author.id <= 0)
+      return { success: false, insertedId: 0, message: 'autor do cadastro inválido.' };
+    if (this.attributes.items.length == 0)
+      return { success: false, insertedId: 0, message: 'não há itens.' };
 
     try {
       const entity = await runner.manager.save(SaleOrderEntity, this.attributes);
-      return entity ? '' : 'erro ao salvar o pedido de venda.';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : { success: false, insertedId: 0, message: 'erro ao salvar o pedido de venda.' };
     } catch (e) {
       console.error(e);
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 

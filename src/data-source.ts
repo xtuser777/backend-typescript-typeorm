@@ -26,6 +26,13 @@ import { SaleItem } from './entity/SaleItem';
 import { FreightBudget } from './entity/FreightBudget';
 import { FreightItem } from './entity/FreightItem';
 import { SaleOrder } from './entity/SaleOrder';
+import { FreightOrder } from './entity/FreightOrder';
+import { OrderStatus } from './entity/OrderStatus';
+import { Status } from './entity/Status';
+import { LoadStep } from './entity/LoadStep';
+import { BillPay } from './entity/BillPay';
+import { ReceiveBill } from './entity/ReceiveBill';
+import { Event } from './entity/Event';
 
 dotenv.config();
 
@@ -64,6 +71,13 @@ export const AppDataSource = new DataSource({
     FreightItem,
     FreightBudget,
     SaleOrder,
+    FreightOrder,
+    OrderStatus,
+    Status,
+    LoadStep,
+    BillPay,
+    ReceiveBill,
+    Event,
   ],
   migrations: [],
   subscribers: [],

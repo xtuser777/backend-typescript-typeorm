@@ -71,12 +71,14 @@ export const BillPay = new EntitySchema<IBillPay>({
       target: 'freight_order',
       joinColumn: { name: 'freight_order_id' },
       nullable: true,
+      onDelete: 'CASCADE',
     },
     saleOrder: {
       type: 'many-to-one',
       target: 'sale_order',
       joinColumn: { name: 'sale_order_id' },
       nullable: true,
+      onDelete: 'CASCADE',
     },
     paymentForm: {
       type: 'many-to-one',
@@ -86,7 +88,7 @@ export const BillPay = new EntitySchema<IBillPay>({
     },
     category: {
       type: 'many-to-one',
-      target: 'category',
+      target: 'bill_pay_category',
       joinColumn: { name: 'category_id' },
       nullable: false,
     },

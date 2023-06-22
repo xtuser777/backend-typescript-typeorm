@@ -64,12 +64,14 @@ export const ReceiveBill = new EntitySchema<IReceiveBill>({
       target: 'freight_order',
       joinColumn: { name: 'freight_order_id' },
       nullable: true,
+      onDelete: 'CASCADE',
     },
     saleOrder: {
       type: 'many-to-one',
       target: 'sale_order',
       joinColumn: { name: 'sale_order_id' },
       nullable: true,
+      onDelete: 'CASCADE',
     },
     author: {
       type: 'many-to-one',

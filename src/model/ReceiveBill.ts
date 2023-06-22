@@ -1,7 +1,8 @@
+import { QueryRunner, TypeORMError } from 'typeorm';
 import { IEmployee } from '../entity/Employee';
 import { IFreightOrder } from '../entity/FreightOrder';
 import { IPaymentForm } from '../entity/PaymentForm';
-import { IReceiveBill } from '../entity/ReceiveBill';
+import { IReceiveBill, ReceiveBill as ReceiveBillEntity } from '../entity/ReceiveBill';
 import { IRepresentation } from '../entity/Representation';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { Employee } from './Employee';
@@ -149,5 +150,100 @@ export class ReceiveBill implements IReceiveBill {
   get toAttributes(): IReceiveBill {
     const attributes: IReceiveBill = { ...this.attributes };
     return attributes;
+  }
+
+  async save(runner: QueryRunner) {
+    if (this.attributes.id != 0) return 'método inválido.';
+    if (this.attributes.date.length < 10) return 'data inválida.';
+    if (this.attributes.bill < 1) return 'número da conta inválido.';
+    if (this.attributes.description.length < 2) return 'descrição da conta inválida.';
+    if (this.attributes.payer.length < 2) return 'pagador da conta inválida.';
+    if (this.attributes.amount <= 0) return 'valor da conta inválido.';
+    if (this.attributes.situation < 1) return 'situação da conta inválida.';
+    if (this.attributes.dueDate.length < 10) return 'data de vencimento inválida.';
+    if (this.attributes.author.id <= 0) return 'autor inválido.';
+
+    try {
+      const entity = await runner.manager.save(ReceiveBillEntity, this.attributes);
+      return entity ? '' : 'erro ao inserir a conta';
+    } catch (e) {
+      console.error(e);
+      return (e as TypeORMError).message;
+    }
+  }
+
+  async update(runner: QueryRunner) {
+    if (this.attributes.id <= 0) return 'método inválido.';
+    if (this.attributes.date.length < 10) return 'data inválida.';
+    if (this.attributes.bill < 1) return 'número da conta inválido.';
+    if (this.attributes.description.length < 2) return 'descrição da conta inválida.';
+    if (this.attributes.payer.length < 2) return 'pagador da conta inválida.';
+    if (this.attributes.amount <= 0) return 'valor da conta inválido.';
+    if (this.attributes.situation < 1) return 'situação da conta inválida.';
+    if (this.attributes.dueDate.length < 10) return 'data de vencimento inválida.';
+    if (this.attributes.author.id <= 0) return 'autor inválido.';
+
+    try {
+      const entity = await runner.manager.save(ReceiveBillEntity, this.attributes);
+      return entity ? '' : 'erro ao atualizar a conta';
+    } catch (e) {
+      console.error(e);
+      return (e as TypeORMError).message;
+    }
+  }
+
+  async delete(runner: QueryRunner) {
+    if (this.attributes.id <= 0) return 'registro inválido.';
+
+    try {
+      const entity = await runner.manager.remove(ReceiveBillEntity, this.attributes);
+      return entity ? '' : 'erro ao remover a conta';
+    } catch (e) {
+      console.error(e);
+      return (e as TypeORMError).message;
+    }
+  }
+
+  async findOne(runner: QueryRunner, id: number) {
+    if (id <= 0) return undefined;
+
+    try {
+      const entity = await runner.manager.findOne(ReceiveBillEntity, {
+        where: { id },
+        relations: {
+          pendency: true,
+          representation: true,
+          paymentForm: true,
+          saleOrder: true,
+          freightOrder: true,
+          author: { person: { individual: true } },
+        },
+      });
+      return entity ? new ReceiveBill(entity) : undefined;
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
+  }
+
+  async find(runner: QueryRunner) {
+    try {
+      const entities = await runner.manager.find(ReceiveBillEntity, {
+        relations: {
+          pendency: true,
+          representation: true,
+          paymentForm: true,
+          saleOrder: true,
+          freightOrder: true,
+          author: { person: { individual: true } },
+        },
+      });
+      const bills: ReceiveBill[] = [];
+      for (const entity of entities) bills.push(new ReceiveBill(entity));
+      return bills;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   }
 }

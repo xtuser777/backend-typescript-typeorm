@@ -2,6 +2,13 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { TypeORMError } from 'typeorm';
 import { SaleOrder } from '../model/SaleOrder';
+import { BillPay } from '../model/BillPay';
+import { BillPay as BillPayEntity } from '../entity/BillPay';
+import { BillPayCategory } from '../model/BillPayCategory';
+import { ReceiveBill } from '../model/ReceiveBill';
+import { ReceiveBill as ReceiveBillEntity } from '../entity/ReceiveBill';
+import { ISaleOrder } from '../entity/SaleOrder';
+import { Event } from '../model/Event';
 
 export class SaleOrderController {
   async index(req: Request, res: Response) {
@@ -45,7 +52,7 @@ export class SaleOrderController {
     const paymentForm = payload.order.paymentForm;
     const author = payload.order.author;
     const items = payload.orde.items;
-    const order = {
+    const order: ISaleOrder = {
       id: 0,
       ...payload.order,
       budget,
@@ -63,14 +70,124 @@ export class SaleOrderController {
       await runner.connect();
       await runner.startTransaction();
       const response = await model.save(runner);
-      if (response.length > 0) {
+      if (!response.success) {
         await runner.rollbackTransaction();
         await runner.release();
-        return res.status(400).json(response);
+        return res.status(400).json(response.message);
+      }
+      order.id = response.insertedId;
+      if (salesman != undefined) {
+        const salesmanComission =
+          (order.value / 100) * payload.order.salesmanComissionPorcent;
+        const billSalesmanComission = new BillPay({
+          id: 0,
+          date: new Date(Date.now()).toISOString().substring(0, 10),
+          bill:
+            (await runner.manager.findAndCount(BillPayEntity))[1] > 0
+              ? ((await new BillPay().find(runner)).pop() as BillPay).bill + 1
+              : 1,
+          type: 2,
+          installment: 1,
+          enterprise: salesman.person.individual.name,
+          description:
+            'Comissão vendedor: ' +
+            salesman.person.individual.name +
+            '. Pedido: ' +
+            response.insertedId,
+          amount: salesmanComission,
+          situation: 1,
+          comission: true,
+          dueDate: new Date(new Date().setMonth(new Date().getMonth() + 2))
+            .toISOString()
+            .substring(0, 10),
+          amountPaid: 0.0,
+          category: (
+            (await new BillPayCategory().findOne(runner, 250)) as BillPayCategory
+          ).toAttributes,
+          author: author,
+        });
+        const responseSalesmanComission = await billSalesmanComission.save(runner);
+        if (responseSalesmanComission.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseSalesmanComission);
+        }
+      }
+      for (const comission of payload.comissions) {
+        const value = (comission.value / 100) * comission.porcent;
+
+        const responseComission = await new ReceiveBill({
+          id: 0,
+          date: new Date(Date.now()).toISOString().substring(0, 10),
+          bill:
+            (await runner.manager.findAndCount(ReceiveBillEntity))[1] > 0
+              ? ((await new ReceiveBill().find(runner)).pop() as ReceiveBill).bill + 1
+              : 1,
+          description: `Recebimento comissão pedido: ${response.insertedId}`,
+          payer: comission.representation.fantasyName,
+          amount: value,
+          comission: true,
+          situation: 1,
+          amountReceived: 0.0,
+          dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
+            .toISOString()
+            .substring(0, 10),
+          author: author,
+        }).save(runner);
+
+        if (responseComission.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseComission);
+        }
+      }
+      const bill = new ReceiveBill({
+        id: 0,
+        date: new Date(Date.now()).toISOString().substring(0, 10),
+        bill:
+          (await runner.manager.findAndCount(ReceiveBillEntity))[1] > 0
+            ? ((await new ReceiveBill().find(runner)).pop() as ReceiveBill).bill + 1
+            : 1,
+        description: `Recebimento pedido: ${response.insertedId}`,
+        payer:
+          client.person.type == 1
+            ? client.person.individual.name
+            : client.person.enterprise.fantasyName,
+        amount: order.value,
+        comission: false,
+        situation: 3,
+        amountReceived: order.value,
+        receiveDate: new Date(Date.now()).toISOString().substring(0, 10),
+        dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
+          .toISOString()
+          .substring(0, 10),
+        paymentForm: paymentForm,
+        saleOrder: order,
+        author: author,
+      });
+      const responseBill = await bill.save(runner);
+      if (responseBill.length > 0) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(responseBill);
+      }
+      const event = new Event({
+        id: 0,
+        description: `Abertura do pedido de venda ${order.id}: ${order.description}`,
+        date: new Date().toISOString().substring(0, 10),
+        time: new Date().toISOString().split('T')[1].substring(0, 8),
+        saleOrder: order,
+        author: author,
+      });
+      const responsEvent = await event.save(runner);
+      if (responsEvent.length > 0) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(responsEvent);
       }
       await runner.commitTransaction();
       await runner.release();
-      return res.json(response);
+      return res.json(response.message);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
