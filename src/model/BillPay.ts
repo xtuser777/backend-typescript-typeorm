@@ -194,25 +194,39 @@ export class BillPay implements IBillPay {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'método inválido.';
-    if (this.attributes.date.length < 10) return 'data inválida.';
-    if (this.attributes.bill < 1) return 'número de conta inválido.';
-    if (this.attributes.type < 1) return 'tipo de conta inválida.';
-    if (this.attributes.description.length < 2) return 'descrição da conta inválida.';
-    if (this.attributes.enterprise.length < 2) return 'empresa recebedora inválida.';
-    if (this.attributes.installment < 1) return 'número da parcela inválida.';
-    if (this.attributes.amount <= 0) return 'valor da conta inválido.';
-    if (this.attributes.situation < 1) return 'situação da conta inválida.';
-    if (this.attributes.dueDate.length < 10) return 'data de vencimento.';
-    if (this.attributes.category.id <= 0) return 'categoria da conta inválida.';
-    if (this.attributes.author.id <= 0) return 'autor da conta inválida.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'método inválido.' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data inválida.' };
+    if (this.attributes.bill < 1)
+      return { success: false, insertedId: 0, message: 'número de conta inválido.' };
+    if (this.attributes.type < 1)
+      return { success: false, insertedId: 0, message: 'tipo de conta inválida.' };
+    if (this.attributes.description.length < 2)
+      return { success: false, insertedId: 0, message: 'descrição da conta inválida.' };
+    if (this.attributes.enterprise.length < 2)
+      return { success: false, insertedId: 0, message: 'empresa recebedora inválida.' };
+    if (this.attributes.installment < 1)
+      return { success: false, insertedId: 0, message: 'número da parcela inválida.' };
+    if (this.attributes.amount <= 0)
+      return { success: false, insertedId: 0, message: 'valor da conta inválido.' };
+    if (this.attributes.situation < 1)
+      return { success: false, insertedId: 0, message: 'situação da conta inválida.' };
+    if (this.attributes.dueDate.length < 10)
+      return { success: false, insertedId: 0, message: 'data de vencimento.' };
+    if (this.attributes.category.id <= 0)
+      return { success: false, insertedId: 0, message: 'categoria da conta inválida.' };
+    if (this.attributes.author.id <= 0)
+      return { success: false, insertedId: 0, message: 'autor da conta inválida.' };
 
     try {
       const entity = await runner.manager.save(BillPayEntity, this.attributes);
-      return entity ? '' : 'erro ao inserir a conta';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : { success: false, insertedId: 0, message: 'erro ao inserir a conta' };
     } catch (e) {
       console.error(e);
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 

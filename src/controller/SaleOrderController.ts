@@ -113,10 +113,10 @@ export class SaleOrderController {
           author: author,
         });
         const responseSalesmanComission = await billSalesmanComission.save(runner);
-        if (responseSalesmanComission.length > 0) {
+        if (!responseSalesmanComission.success) {
           await runner.rollbackTransaction();
           await runner.release();
-          return res.status(400).json(responseSalesmanComission);
+          return res.status(400).json(responseSalesmanComission.message);
         }
       }
       for (const comission of payload.comissions) {

@@ -235,31 +235,57 @@ export class FreightOrder implements IFreightOrder {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'método inválido';
-    if (this.attributes.date.length < 10) return 'data inválida.';
-    if (this.attributes.description.length < 2) return 'descrição inválida.';
-    if (this.attributes.distance < 1) return 'distância do frete inválida.';
-    if (this.attributes.weight <= 0) return 'peso da carga inválido.';
-    if (this.attributes.value <= 0) return 'valor do frete inválido.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'método inválido' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data inválida.' };
+    if (this.attributes.description.length < 2)
+      return { success: false, insertedId: 0, message: 'descrição inválida.' };
+    if (this.attributes.distance < 1)
+      return { success: false, insertedId: 0, message: 'distância do frete inválida.' };
+    if (this.attributes.weight <= 0)
+      return { success: false, insertedId: 0, message: 'peso da carga inválido.' };
+    if (this.attributes.value <= 0)
+      return { success: false, insertedId: 0, message: 'valor do frete inválido.' };
     if (this.attributes.driverValue <= 0)
-      return 'valor a ser pago ao motorista inválido.';
-    if (this.attributes.shipping.length < 10) return 'data de entrega inválida.';
-    if (this.attributes.client.id <= 0) return 'cliente inválido.';
-    if (this.attributes.destiny.id <= 0) return 'cidade de destino inválida.';
-    if (this.attributes.driver.id <= 0) return 'motorista inválido.';
-    if (this.attributes.proprietary.id <= 0) return 'proprietário do caminhão inválido.';
-    if (this.attributes.truckType.id <= 0) return 'tipo de caminhão inválido.';
-    if (this.attributes.truck.id <= 0) return 'caminhão inválido.';
-    if (this.attributes.paymentFormFreight.id <= 0) return 'forma de pagamento inválida.';
-    if (this.attributes.items.length < 0) return 'não ha itens.';
-    if (this.attributes.steps.length < 0) return 'não ha etapas de carregamento.';
+      return {
+        success: false,
+        insertedId: 0,
+        message: 'valor a ser pago ao motorista inválido.',
+      };
+    if (this.attributes.shipping.length < 10)
+      return { success: false, insertedId: 0, message: 'data de entrega inválida.' };
+    if (this.attributes.client.id <= 0)
+      return { success: false, insertedId: 0, message: 'cliente inválido.' };
+    if (this.attributes.destiny.id <= 0)
+      return { success: false, insertedId: 0, message: 'cidade de destino inválida.' };
+    if (this.attributes.driver.id <= 0)
+      return { success: false, insertedId: 0, message: 'motorista inválido.' };
+    if (this.attributes.proprietary.id <= 0)
+      return {
+        success: false,
+        insertedId: 0,
+        message: 'proprietário do caminhão inválido.',
+      };
+    if (this.attributes.truckType.id <= 0)
+      return { success: false, insertedId: 0, message: 'tipo de caminhão inválido.' };
+    if (this.attributes.truck.id <= 0)
+      return { success: false, insertedId: 0, message: 'caminhão inválido.' };
+    if (this.attributes.paymentFormFreight.id <= 0)
+      return { success: false, insertedId: 0, message: 'forma de pagamento inválida.' };
+    if (this.attributes.items.length < 0)
+      return { success: false, insertedId: 0, message: 'não ha itens.' };
+    if (this.attributes.steps.length < 0)
+      return { success: false, insertedId: 0, message: 'não ha etapas de carregamento.' };
 
     try {
       const entity = await runner.manager.save(FreightOrderEntity, this.attributes);
-      return entity ? '' : 'erro ao inserir o pedido.';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : { success: false, insertedId: 0, message: 'erro ao inserir o pedido.' };
     } catch (e) {
       console.log(e);
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 
@@ -405,7 +431,7 @@ export class FreightOrder implements IFreightOrder {
           },
         },
       });
-      const orders: IFreightOrder[] = [];
+      const orders: FreightOrder[] = [];
       for (const entity of entities) orders.push(new FreightOrder(entity));
       return orders;
     } catch (e) {
