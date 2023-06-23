@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { IBillPay, BillPay as BillPayEntity } from '../entity/BillPay';
 import { IBillPayCategory } from '../entity/BillPayCategory';
 import { IDriver } from '../entity/Driver';
@@ -251,12 +251,10 @@ export class BillPay implements IBillPay {
     }
   }
 
-  async findOne(runner: QueryRunner, id: number) {
-    if (id <= 0) return undefined;
-
+  async findOne(runner: QueryRunner, params: FindOptionsWhere<IBillPay>) {
     try {
       const entity = await runner.manager.findOne(BillPayEntity, {
-        where: { id },
+        where: params,
         relations: {
           pendency: true,
           driver: true,
@@ -275,9 +273,10 @@ export class BillPay implements IBillPay {
     }
   }
 
-  async find(runner: QueryRunner) {
+  async find(runner: QueryRunner, params?: FindOptionsWhere<IBillPay>) {
     try {
       const entities = await runner.manager.find(BillPayEntity, {
+        where: params,
         relations: {
           pendency: true,
           driver: true,

@@ -9,6 +9,10 @@ import { ReceiveBill } from '../model/ReceiveBill';
 import { ReceiveBill as ReceiveBillEntity } from '../entity/ReceiveBill';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { Event } from '../model/Event';
+import { FreightOrder } from '../model/FreightOrder';
+import { ActiveUser } from '../util/active-user';
+import { Employee } from '../model/Employee';
+import { IEmployee } from '../entity/Employee';
 
 export class SaleOrderController {
   async index(req: Request, res: Response) {
@@ -32,7 +36,7 @@ export class SaleOrderController {
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const order = await new SaleOrder().findOne(runner, id);
+      const order = await new SaleOrder().findOne(runner, { id });
       await runner.release();
       return res.json(order ? order.toAttributes : undefined);
     } catch (e) {
@@ -50,24 +54,26 @@ export class SaleOrderController {
     const destiny = payload.order.destiny;
     const truckType = payload.order.truckType;
     const paymentForm = payload.order.paymentForm;
-    const author = payload.order.author;
     const items = payload.orde.items;
-    const order: ISaleOrder = {
-      id: 0,
-      ...payload.order,
-      budget,
-      salesman,
-      client,
-      destiny,
-      truckType,
-      paymentForm,
-      author,
-      items,
-    };
-    const model = new SaleOrder(order);
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
+      const activeUser = ActiveUser.getInstance() as ActiveUser;
+      const author = (await new Employee().findOne(runner, activeUser.getId()))
+        ?.toAttributes as IEmployee;
+      const order: ISaleOrder = {
+        id: 0,
+        ...payload.order,
+        budget,
+        salesman,
+        client,
+        destiny,
+        truckType,
+        paymentForm,
+        author,
+        items,
+      };
+      const model = new SaleOrder(order);
       await runner.startTransaction();
       const response = await model.save(runner);
       if (!response.success) {
@@ -200,22 +206,98 @@ export class SaleOrderController {
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const order = await new SaleOrder().findOne(runner, id);
+      const order = await new SaleOrder().findOne(runner, { id });
       if (!order) {
         await runner.release();
         return res.status(400).json('pedido não encontrado.');
       }
+      const freightOrder = await new FreightOrder().findOne(runner, { saleOrder: order });
+      if (freightOrder) {
+        return res
+          .status(400)
+          .json(`Este orçamento está vinculado ao pedido de frete "${freightOrder}"`);
+      }
       await runner.startTransaction();
+      const orderReceive = await new ReceiveBill().findOne(runner, { saleOrder: order });
+      if (orderReceive) {
+        if (orderReceive.amountReceived > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res
+            .status(400)
+            .json('O pedido já foi pago pelo cliente, estorne o pagamento primeiro.');
+        }
+        if (orderReceive.pendency) {
+          const orderReceivePendency = new ReceiveBill(orderReceive.pendency);
+          const responseOrderReceivePendency = await orderReceivePendency.delete(runner);
+          if (responseOrderReceivePendency.length > 0) {
+            await runner.rollbackTransaction();
+            await runner.release();
+            return res.status(400).json(responseOrderReceivePendency);
+          }
+        }
+        const responseOrderReceive = await orderReceive.delete(runner);
+        if (responseOrderReceive.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseOrderReceive);
+        }
+      }
+      if (order.salesman) {
+        const salesmanComission = await new BillPay().findOne(runner, {
+          saleOrder: order,
+        });
+        if (salesmanComission) {
+          const responseSalesmanComission = await salesmanComission.delete(runner);
+          if (responseSalesmanComission.length > 0) {
+            await runner.rollbackTransaction();
+            await runner.release();
+            return res.status(400).json(responseSalesmanComission);
+          }
+        }
+      }
+      const comissions = await new ReceiveBill().find(runner, { saleOrder: order });
+      for (const comission of comissions) {
+        if (comission.situation > 1) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res
+            .status(400)
+            .json('O pedido tem comissões recebidas, estorne o recebimento primeiro.');
+        }
+        const responseComission = await comission.delete(runner);
+        if (responseComission.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseComission);
+        }
+      }
       for (const item of order.items) {
         await runner.manager.query('delete from sale_item where id = ?', [item.id]);
       }
-      await runner.commitTransaction();
-      await runner.startTransaction();
+      // await runner.commitTransaction();
+      // await runner.startTransaction();
       const response = await order.delete(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json(response);
+      }
+      const activeUser = ActiveUser.getInstance() as ActiveUser;
+      const author = (await new Employee().findOne(runner, activeUser.getId()))
+        ?.toAttributes as IEmployee;
+      const event = new Event({
+        id: 0,
+        description: `O pedido de venda ${order.id} foi deletado.`,
+        date: new Date().toISOString().substring(0, 10),
+        time: new Date().toISOString().split('T')[1].substring(0, 8),
+        author: author,
+      });
+      const responseEvent = await event.save(runner);
+      if (responseEvent.length > 0) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(responseEvent);
       }
       await runner.commitTransaction();
       await runner.release();

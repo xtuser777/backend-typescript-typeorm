@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { IEmployee } from '../entity/Employee';
 import { IFreightOrder } from '../entity/FreightOrder';
 import { IPaymentForm } from '../entity/PaymentForm';
@@ -204,12 +204,10 @@ export class ReceiveBill implements IReceiveBill {
     }
   }
 
-  async findOne(runner: QueryRunner, id: number) {
-    if (id <= 0) return undefined;
-
+  async findOne(runner: QueryRunner, params: FindOptionsWhere<IReceiveBill>) {
     try {
       const entity = await runner.manager.findOne(ReceiveBillEntity, {
-        where: { id },
+        where: params,
         relations: {
           pendency: true,
           representation: true,
@@ -226,9 +224,10 @@ export class ReceiveBill implements IReceiveBill {
     }
   }
 
-  async find(runner: QueryRunner) {
+  async find(runner: QueryRunner, params?: FindOptionsWhere<IReceiveBill>) {
     try {
       const entities = await runner.manager.find(ReceiveBillEntity, {
+        where: params,
         relations: {
           pendency: true,
           representation: true,

@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { ICity } from '../entity/City';
 import { IClient } from '../entity/Client';
 import { IEmployee } from '../entity/Employee';
@@ -183,12 +183,10 @@ export class SaleOrder implements ISaleOrder {
     }
   }
 
-  async findOne(runner: QueryRunner, id: number) {
-    if (id <= 0) return undefined;
-
+  async findOne(runner: QueryRunner, params: FindOptionsWhere<ISaleOrder>) {
     try {
       const entity = await runner.manager.findOne(SaleOrderEntity, {
-        where: { id },
+        where: params,
         relations: {
           budget: true,
           salesman: true,
@@ -217,9 +215,10 @@ export class SaleOrder implements ISaleOrder {
     }
   }
 
-  async find(runner: QueryRunner) {
+  async find(runner: QueryRunner, params?: FindOptionsWhere<ISaleOrder>) {
     try {
       const entities = await runner.manager.find(SaleOrderEntity, {
+        where: params,
         relations: {
           budget: true,
           salesman: true,
