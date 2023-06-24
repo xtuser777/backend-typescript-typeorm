@@ -35,8 +35,8 @@ export class BillPay implements IBillPay {
           salesman: undefined,
           freightOrder: undefined,
           saleOrder: undefined,
+          paymentForm: undefined,
           category: new BillPayCategory(),
-          paymentForm: new PaymentForm(),
           author: new Employee(),
         };
   }
@@ -302,7 +302,7 @@ export class BillPay implements IBillPay {
           author: true,
         },
       });
-      const bills: IBillPay[] = [];
+      const bills: BillPay[] = [];
       for (const entity of entities) bills.push(new BillPay(entity));
       return bills;
     } catch (e) {

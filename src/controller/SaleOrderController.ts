@@ -211,14 +211,18 @@ export class SaleOrderController {
         await runner.release();
         return res.status(400).json('pedido não encontrado.');
       }
-      const freightOrder = await new FreightOrder().findOne(runner, { saleOrder: order });
+      const freightOrder = await new FreightOrder().findOne(runner, {
+        saleOrder: order.toAttributes,
+      });
       if (freightOrder) {
         return res
           .status(400)
-          .json(`Este orçamento está vinculado ao pedido de frete "${freightOrder}"`);
+          .json(`Este pedido está vinculado ao pedido de frete "${freightOrder.id}"`);
       }
       await runner.startTransaction();
-      const orderReceive = await new ReceiveBill().findOne(runner, { saleOrder: order });
+      const orderReceive = await new ReceiveBill().findOne(runner, {
+        saleOrder: order.toAttributes,
+      });
       if (orderReceive) {
         if (orderReceive.amountReceived > 0) {
           await runner.rollbackTransaction();
@@ -245,7 +249,7 @@ export class SaleOrderController {
       }
       if (order.salesman) {
         const salesmanComission = await new BillPay().findOne(runner, {
-          saleOrder: order,
+          saleOrder: order.toAttributes,
         });
         if (salesmanComission) {
           const responseSalesmanComission = await salesmanComission.delete(runner);
@@ -256,7 +260,9 @@ export class SaleOrderController {
           }
         }
       }
-      const comissions = await new ReceiveBill().find(runner, { saleOrder: order });
+      const comissions = await new ReceiveBill().find(runner, {
+        saleOrder: order.toAttributes,
+      });
       for (const comission of comissions) {
         if (comission.situation > 1) {
           await runner.rollbackTransaction();

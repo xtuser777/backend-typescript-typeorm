@@ -251,10 +251,77 @@ export class FreightOrderController {
   }
 
   async delete(req: Request, res: Response) {
+    let id = 0;
+    id = Number.parseInt(req.params.id);
+    if (Number.isNaN(id)) return res.status(400).json('parâmetro inválido.');
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      return res.json();
+      const order = await new FreightOrder().findOne(runner, { id });
+      if (!order) {
+        await runner.release();
+        return res.status(400).json('pedido não encontrado.');
+      }
+      await runner.startTransaction();
+      for (const step of order.steps) {
+        const responseStep = await new LoadStep(step).delete(runner);
+        if (!responseStep.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseStep.message);
+        }
+      }
+      for (const item of order.items) {
+        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+      }
+      const proprietaryBill = await new BillPay().findOne(runner, {
+        freightOrder: order.toAttributes,
+      });
+      if (proprietaryBill) {
+        const responseProprietaryBill = await proprietaryBill.delete(runner);
+        if (responseProprietaryBill.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseProprietaryBill);
+        }
+      }
+      const orderBill = await new ReceiveBill().findOne(runner, {
+        freightOrder: order.toAttributes,
+      });
+      if (orderBill) {
+        const responseOrderBill = await orderBill.delete(runner);
+        if (responseOrderBill.length > 0) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseOrderBill);
+        }
+      }
+      const response = await order.delete(runner);
+      if (response.length > 0) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(response);
+      }
+      const activeUser = ActiveUser.getInstance() as ActiveUser;
+      const author = (await new Employee().findOne(runner, activeUser.getId()))
+        ?.toAttributes as IEmployee;
+      const event = new Event({
+        id: 0,
+        description: `O pedido de frete ${order.id} foi deletado.`,
+        date: new Date().toISOString().substring(0, 10),
+        time: new Date().toISOString().split('T')[1].substring(0, 8),
+        author: author,
+      });
+      const responseEvent = await event.save(runner);
+      if (responseEvent.length > 0) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(responseEvent);
+      }
+      await runner.commitTransaction();
+      await runner.release();
+
+      return res.json(response);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
