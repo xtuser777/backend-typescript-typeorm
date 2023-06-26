@@ -1,11 +1,10 @@
-import { Request, Response, response } from 'express';
+import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { TypeORMError } from 'typeorm';
 import { BillPay } from '../model/BillPay';
 import { IBillPay } from '../entity/BillPay';
 import { IDriver } from '../entity/Driver';
 import { IEmployee } from '../entity/Employee';
-import { FreightOrder } from '../model/FreightOrder';
 import { IFreightOrder } from '../entity/FreightOrder';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { IPaymentForm } from '../entity/PaymentForm';

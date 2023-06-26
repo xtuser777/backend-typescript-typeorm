@@ -123,7 +123,7 @@ export class Event implements IEvent {
           author: { person: { individual: true } },
         },
       });
-      const events: IEvent[] = [];
+      const events: Event[] = [];
       for (const entity of entities) events.push(new Event(entity));
       return events;
     } catch (e) {

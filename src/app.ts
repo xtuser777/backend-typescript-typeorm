@@ -25,6 +25,8 @@ import freightBudget from './routes/freight-budget';
 import saleOrder from './routes/sale-order';
 import freightOrder from './routes/freight-order';
 import billPay from './routes/bill-pay';
+import receiveBill from './routes/receive-bill';
+import event from './routes/event';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
 
@@ -85,6 +87,8 @@ class App {
     this.app.use('/sale-order', saleOrder);
     this.app.use('/freight-order', freightOrder);
     this.app.use('/bill-pay', billPay);
+    this.app.use('/receive-bill', receiveBill);
+    this.app.use('/event', event);
   }
 }
 
