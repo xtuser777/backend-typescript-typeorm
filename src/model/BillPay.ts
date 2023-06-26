@@ -8,7 +8,6 @@ import { IPaymentForm } from '../entity/PaymentForm';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { BillPayCategory } from './BillPayCategory';
 import { Employee } from './Employee';
-import { PaymentForm } from './PaymentForm';
 
 export class BillPay implements IBillPay {
   private attributes: IBillPay;
