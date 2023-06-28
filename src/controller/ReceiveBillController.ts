@@ -86,10 +86,10 @@ export class ReceiveBillController {
           paymentForm: undefined,
         }) as ReceiveBill;
         const responsePendency = await (pendency as ReceiveBill).save(runner);
-        if (!responsePendency.success) {
+        if (!responsePendency) {
           await runner.rollbackTransaction();
           await runner.release();
-          return res.status(400).json(responsePendency.message);
+          return res.status(400).json(responsePendency);
         }
       }
       if (situation == 1 && bill.pendency) {
