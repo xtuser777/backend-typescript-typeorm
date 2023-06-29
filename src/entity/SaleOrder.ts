@@ -76,14 +76,9 @@ export const SaleOrder = new EntitySchema<ISaleOrder>({
       nullable: false,
     },
     items: {
-      type: 'many-to-many',
+      type: 'one-to-many',
       target: 'sale_item',
-      joinTable: {
-        name: 'sale_order_item',
-        joinColumn: { name: 'sale_order_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'sale_item_id', referencedColumnName: 'id' },
-      },
-      cascade: true,
+      inverseSide: 'order',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },

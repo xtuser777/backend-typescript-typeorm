@@ -127,6 +127,7 @@ export class SaleOrderController {
           category: (
             (await new BillPayCategory().findOne(runner, 250)) as BillPayCategory
           ).toAttributes,
+          saleOrder: order,
           author: author,
         });
         const responseSalesmanComission = await billSalesmanComission.save(runner);
@@ -155,6 +156,8 @@ export class SaleOrderController {
           dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
             .toISOString()
             .substring(0, 10),
+          representation: comission.representacao,
+          saleOrder: order,
           author: author,
         }).save(runner);
 

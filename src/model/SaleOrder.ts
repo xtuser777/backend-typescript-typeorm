@@ -188,11 +188,11 @@ export class SaleOrder implements ISaleOrder {
         relations: {
           budget: true,
           salesman: true,
-          client: true,
+          client: { person: { individual: true, enterprise: true } },
           destiny: { state: true },
           //truckType: true,
           paymentForm: true,
-          author: true,
+          author: { person: { individual: true } },
           items: {
             product: {
               representation: {
@@ -220,11 +220,11 @@ export class SaleOrder implements ISaleOrder {
         relations: {
           budget: true,
           salesman: true,
-          client: true,
+          client: { person: { individual: true, enterprise: true } },
           destiny: { state: true },
           //truckType: true,
           paymentForm: true,
-          author: true,
+          author: { person: { individual: true } },
           items: {
             product: {
               representation: {
