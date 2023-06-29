@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { ICity } from '../entity/City';
 import { IClient } from '../entity/Client';
 import { IEmployee } from '../entity/Employee';
@@ -187,12 +187,10 @@ export class FreightBudget implements IFreightBudget {
     }
   }
 
-  async findOne(runner: QueryRunner, id: number) {
-    if (id <= 0) return undefined;
-
+  async findOne(runner: QueryRunner, params: FindOptionsWhere<IFreightBudget>) {
     try {
       const entity = await runner.manager.findOne(FreightBudgetEntity, {
-        where: { id },
+        where: params,
         relations: {
           saleBudget: true,
           representation: true,
@@ -235,9 +233,10 @@ export class FreightBudget implements IFreightBudget {
     }
   }
 
-  async find(runner: QueryRunner) {
+  async find(runner: QueryRunner, params?: FindOptionsWhere<IFreightBudget>) {
     try {
       const entities = await runner.manager.find(FreightBudgetEntity, {
+        where: params,
         relations: {
           saleBudget: true,
           representation: true,

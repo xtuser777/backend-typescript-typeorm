@@ -1,12 +1,16 @@
 import { EntitySchema } from 'typeorm';
 import { IProduct } from './Product';
+import { ISaleBudget } from './SaleBudget';
+import { ISaleOrder } from './SaleOrder';
 
 export interface ISaleItem {
   id: number;
-  product: IProduct;
   quantity: number;
   weight: number;
   price: number;
+  product: IProduct;
+  budget?: ISaleBudget;
+  order?: ISaleOrder;
 }
 
 export const SaleItem = new EntitySchema<ISaleItem>({
@@ -24,7 +28,23 @@ export const SaleItem = new EntitySchema<ISaleItem>({
       joinColumn: {
         name: 'product_id',
       },
-      primary: true,
+      nullable: false,
+    },
+    budget: {
+      type: 'many-to-one',
+      target: 'sale_budget',
+      joinColumn: { name: 'budget_id' },
+      inverseSide: 'items',
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+    order: {
+      type: 'many-to-one',
+      target: 'sale_order',
+      joinColumn: { name: 'order_id' },
+      inverseSide: 'items',
+      onDelete: 'CASCADE',
+      nullable: true,
     },
   },
 });

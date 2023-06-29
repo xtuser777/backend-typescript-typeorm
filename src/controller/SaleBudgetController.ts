@@ -11,6 +11,9 @@ import { ActiveUser } from '../util/active-user';
 import { ISaleItem } from '../entity/SaleItem';
 import { ICity } from '../entity/City';
 import { IClient } from '../entity/Client';
+import { FreightBudget } from '../model/FreightBudget';
+import { SaleOrder } from '../model/SaleOrder';
+import { SaleItem } from '../model/SaleItem';
 
 export class SaleBudgetController {
   index = async (req: Request, res: Response) => {
@@ -52,34 +55,44 @@ export class SaleBudgetController {
     const activeUser = ActiveUser.getInstance() as ActiveUser;
     const payload = req.body;
     const items: ISaleItem[] = payload.budget.items;
-    const destiny = await new City().findOne(payload.budget.destiny);
+    const destiny: ICity = payload.budget.destiny;
+    const salesman: IEmployee | undefined = payload.budget.salesman;
+    const client: IClient | undefined = payload.budget.client;
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const salesman = await new Employee().findOne(runner, payload.budget.salesman);
-      const client = await new Client().findOne(runner, payload.budget.client);
       const author = await new Employee().findOne(runner, activeUser.getId());
       const budget: ISaleBudget = {
         id: 0,
         ...payload.budget,
-        salesman: salesman?.toAttributes,
-        client: client?.toAttributes,
-        destiny: destiny?.toAttributes,
+        salesman: salesman,
+        client: client,
+        destiny: destiny,
         author: author?.toAttributes,
-        items,
+        items: [],
       };
       const model = new SaleBudget(budget);
       await runner.startTransaction();
       const response = await model.save(runner);
-      if (response.length > 0) {
+      if (!response.success) {
         await runner.rollbackTransaction();
         await runner.release();
-        return res.status(400).json(response);
+        return res.status(400).json(response.message);
+      }
+      budget.id = response.insertedId;
+      for (const item of items) {
+        item.budget = budget;
+        const responseItem = await new SaleItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
       await runner.commitTransaction();
       await runner.release();
 
-      return res.json(response);
+      return res.json(response.message);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
@@ -151,6 +164,26 @@ export class SaleBudgetController {
       if (!budget) {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
+      }
+      const freight = await new FreightBudget().findOne(runner, {
+        saleBudget: budget.toAttributes,
+      });
+      if (freight) {
+        await runner.release();
+        return res
+          .status(400)
+          .json(
+            'Este orçamento possui um vínculo com o orçamento de frete:' + freight.id,
+          );
+      }
+      const order = await new SaleOrder().findOne(runner, {
+        budget: budget.toAttributes,
+      });
+      if (order) {
+        await runner.release();
+        return res
+          .status(400)
+          .json('Este orçamento possui um vínculo com o pedido de venda:' + order.id);
       }
       await runner.startTransaction();
       for (const item of budget.items) {

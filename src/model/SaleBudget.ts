@@ -130,38 +130,51 @@ export class SaleBudget implements ISaleBudget {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'operação inválida.';
-    if (this.attributes.date.length < 10) return 'data de cadastro inválida.';
-    if (this.attributes.description.length < 2) return 'descrição do orçamento inválida.';
-    if (this.attributes.clientName.length < 2) return 'nome do cliente inválido.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'operação inválida.' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data de cadastro inválida.' };
+    if (this.attributes.description.length < 2)
+      return {
+        success: false,
+        insertedId: 0,
+        message: 'descrição do orçamento inválida.',
+      };
+    if (this.attributes.clientName.length < 2)
+      return { success: false, insertedId: 0, message: 'nome do cliente inválido.' };
     if (this.attributes.clientDocument.length < 2)
-      return 'documento do cliente inválido.';
-    if (this.attributes.clientPhone.length < 2) return 'telefone do cliente inválido.';
-    if (this.attributes.clientCellphone.length < 2) return 'celular do cliente inválido.';
-    if (this.attributes.clientEmail.length < 2) return 'e-mail do cliente inválido.';
-    if (this.attributes.weight <= 0) return 'peso dos itens inválido.';
-    if (this.attributes.value <= 0) return 'valor do orçamento inválido.';
-    if (this.attributes.validate.length < 10) return 'data de validade inválida.';
+      return { success: false, insertedId: 0, message: 'documento do cliente inválido.' };
+    if (this.attributes.clientPhone.length < 2)
+      return { success: false, insertedId: 0, message: 'telefone do cliente inválido.' };
+    if (this.attributes.clientCellphone.length < 2)
+      return { success: false, insertedId: 0, message: 'celular do cliente inválido.' };
+    if (this.attributes.clientEmail.length < 2)
+      return { success: false, insertedId: 0, message: 'e-mail do cliente inválido.' };
+    if (this.attributes.weight <= 0)
+      return { success: false, insertedId: 0, message: 'peso dos itens inválido.' };
+    if (this.attributes.value <= 0)
+      return { success: false, insertedId: 0, message: 'valor do orçamento inválido.' };
+    if (this.attributes.validate.length < 10)
+      return { success: false, insertedId: 0, message: 'data de validade inválida.' };
     if (
       !this.attributes.destiny ||
       (this.attributes.destiny && this.attributes.destiny.id == 0)
     )
-      return 'cidade de destino inválida.';
+      return { success: false, insertedId: 0, message: 'cidade de destino inválida.' };
     if (
       !this.attributes.author ||
       (this.attributes.author && this.attributes.author.id == 0)
     )
-      return 'autor do orçamento inválido.';
-    if (this.attributes.items.length == 0) return 'não há itens no orçamento.';
+      return { success: false, insertedId: 0, message: 'autor do orçamento inválido.' };
 
     try {
       const entity = await runner.manager.save(SaleBudgetEntity, this.attributes);
-
-      return entity ? '' : 'erro ao inserir o orçamento.';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : { success: false, insertedId: 0, message: 'erro ao inserir o orçamento.' };
     } catch (e) {
       console.log(e);
-
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 

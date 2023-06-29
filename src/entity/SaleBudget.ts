@@ -70,14 +70,9 @@ export const SaleBudget = new EntitySchema<ISaleBudget>({
       },
     },
     items: {
-      type: 'many-to-many',
+      type: 'one-to-many',
       target: 'sale_item',
-      joinTable: {
-        name: 'sale_budget_item',
-        joinColumn: { name: 'sale_budget_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'sale_item_id', referencedColumnName: 'id' },
-      },
-      cascade: true,
+      inverseSide: 'budget',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },

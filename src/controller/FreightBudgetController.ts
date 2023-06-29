@@ -6,6 +6,7 @@ import { ActiveUser } from '../util/active-user';
 import { IFreightItem } from '../entity/FreightItem';
 import { Employee } from '../model/Employee';
 import { IFreightBudget } from '../entity/FreightBudget';
+import { FreightOrder } from '../model/FreightOrder';
 
 export class FreightBudgetController {
   index = async (req: Request, res: Response) => {
@@ -30,7 +31,7 @@ export class FreightBudgetController {
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const budget = await new FreightBudget().findOne(runner, id);
+      const budget = await new FreightBudget().findOne(runner, { id });
       await runner.release();
       return res.json(budget ? budget.toAttributes : undefined);
     } catch (e) {
@@ -99,7 +100,7 @@ export class FreightBudgetController {
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const budget = await new FreightBudget().findOne(runner, id);
+      const budget = await new FreightBudget().findOne(runner, { id });
       if (!budget) {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
@@ -145,10 +146,19 @@ export class FreightBudgetController {
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
-      const budget = await new FreightBudget().findOne(runner, id);
+      const budget = await new FreightBudget().findOne(runner, { id });
       if (!budget) {
         await runner.release();
         return res.status(400).json('orçamento não encontrado.');
+      }
+      const order = await new FreightOrder().findOne(runner, {
+        budget: budget.toAttributes,
+      });
+      if (order) {
+        await runner.release();
+        return res
+          .status(400)
+          .json('Este orçamento possui um vínculo com o pedido de frete:' + order.id);
       }
       await runner.startTransaction();
       for (const item of budget.items) {
