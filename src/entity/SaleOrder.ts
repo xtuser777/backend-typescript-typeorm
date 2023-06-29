@@ -5,7 +5,7 @@ import { IEmployee } from './Employee';
 import { IPaymentForm } from './PaymentForm';
 import { ISaleBudget } from './SaleBudget';
 import { ISaleItem } from './SaleItem';
-import { ITruckType } from './TruckType';
+//import { ITruckType } from './TruckType';
 
 export interface ISaleOrder {
   id: number;
@@ -16,7 +16,7 @@ export interface ISaleOrder {
   salesman?: IEmployee;
   destiny: ICity;
   budget?: ISaleBudget;
-  truckType: ITruckType;
+  //truckType: ITruckType;
   client: IClient;
   paymentForm: IPaymentForm;
   author: IEmployee;
@@ -51,12 +51,12 @@ export const SaleOrder = new EntitySchema<ISaleOrder>({
       joinColumn: { name: 'destiny_id' },
       nullable: false,
     },
-    truckType: {
-      type: 'many-to-one',
-      target: 'truck_type',
-      joinColumn: { name: 'truck_type_id' },
-      nullable: false,
-    },
+    // truckType: {
+    //   type: 'many-to-one',
+    //   target: 'truck_type',
+    //   joinColumn: { name: 'truck_type_id' },
+    //   nullable: false,
+    // },
     client: {
       type: 'many-to-one',
       target: 'client',

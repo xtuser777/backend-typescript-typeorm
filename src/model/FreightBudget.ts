@@ -129,26 +129,44 @@ export class FreightBudget implements IFreightBudget {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'método inválido';
-    if (this.attributes.date.length < 10) return 'data de cadastro inválida.';
-    if (this.attributes.description.length < 2) return 'descrição inválida.';
-    if (this.attributes.distance <= 0) return 'distância da entrega inválida.';
-    if (this.attributes.weight <= 0) return 'peso dos itens inválido.';
-    if (this.attributes.value <= 0) return 'valor do orçamento inválido.';
-    if (this.attributes.shipping.length < 10) return 'data de entrega inválida.';
-    if (this.attributes.validate.length < 10) return 'data de validade inválida.';
-    if (this.attributes.client.id <= 0) return 'cliente inválido.';
-    if (this.attributes.truckType.id <= 0) return 'tipo de caminhão inválido.';
-    if (this.attributes.destiny.id <= 0) return 'cidade de destino inválida.';
-    if (this.attributes.author.id <= 0) return 'autor do orçamento inválido.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'método inválido' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data de cadastro inválida.' };
+    if (this.attributes.description.length < 2)
+      return { success: false, insertedId: 0, message: 'descrição inválida.' };
+    if (this.attributes.distance <= 0)
+      return { success: false, insertedId: 0, message: 'distância da entrega inválida.' };
+    if (this.attributes.weight <= 0)
+      return { success: false, insertedId: 0, message: 'peso dos itens inválido.' };
+    if (this.attributes.value <= 0)
+      return { success: false, insertedId: 0, message: 'valor do orçamento inválido.' };
+    if (this.attributes.shipping.length < 10)
+      return { success: false, insertedId: 0, message: 'data de entrega inválida.' };
+    if (this.attributes.validate.length < 10)
+      return { success: false, insertedId: 0, message: 'data de validade inválida.' };
+    if (this.attributes.client.id <= 0)
+      return { success: false, insertedId: 0, message: 'cliente inválido.' };
+    if (this.attributes.truckType.id <= 0)
+      return { success: false, insertedId: 0, message: 'tipo de caminhão inválido.' };
+    if (this.attributes.destiny.id <= 0)
+      return { success: false, insertedId: 0, message: 'cidade de destino inválida.' };
+    if (this.attributes.author.id <= 0)
+      return { success: false, insertedId: 0, message: 'autor do orçamento inválido.' };
 
     try {
       const entity = await runner.manager.save(FreightBudgetEntity, this.attributes);
 
-      return entity ? '' : 'erro ao inserir o orçamento de frete.';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : {
+            success: false,
+            insertedId: 0,
+            message: 'erro ao inserir o orçamento de frete.',
+          };
     } catch (e) {
       console.error(e);
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 

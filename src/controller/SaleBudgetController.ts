@@ -5,8 +5,6 @@ import { SaleBudget } from '../model/SaleBudget';
 import { ISaleBudget } from '../entity/SaleBudget';
 import { IEmployee } from '../entity/Employee';
 import { Employee } from '../model/Employee';
-import { Client } from '../model/Client';
-import { City } from '../model/City';
 import { ActiveUser } from '../util/active-user';
 import { ISaleItem } from '../entity/SaleItem';
 import { ICity } from '../entity/City';
@@ -132,16 +130,28 @@ export class SaleBudgetController {
       budget.destiny = destiny;
       await runner.startTransaction();
       for (const item of budget.items) {
-        await runner.manager.query('delete from sale_item where id = ?', [item.id]);
+        const responseItem = await new SaleItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
-      await runner.commitTransaction();
-      budget.items = items;
-      await runner.startTransaction();
+      budget.items = [];
       const response = await budget.update(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json(response);
+      }
+      for (const item of items) {
+        item.budget = budget.toAttributes;
+        const responseItem = await new SaleItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
       await runner.commitTransaction();
       await runner.release();
@@ -187,10 +197,13 @@ export class SaleBudgetController {
       }
       await runner.startTransaction();
       for (const item of budget.items) {
-        await runner.manager.query('delete from sale_item where id = ?', [item.id]);
+        const responseItem = await new SaleItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
-      await runner.commitTransaction();
-      await runner.startTransaction();
       const response = await budget.delete(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();

@@ -7,6 +7,7 @@ import { IFreightItem } from '../entity/FreightItem';
 import { Employee } from '../model/Employee';
 import { IFreightBudget } from '../entity/FreightBudget';
 import { FreightOrder } from '../model/FreightOrder';
+import { FreightItem } from '../model/FreightItem';
 
 export class FreightBudgetController {
   index = async (req: Request, res: Response) => {
@@ -64,20 +65,30 @@ export class FreightBudgetController {
         truckType: truckType,
         destiny: destiny,
         author: author?.toAttributes,
-        items,
+        items: [],
       };
       const model = new FreightBudget(budget);
       await runner.startTransaction();
       const response = await model.save(runner);
-      if (response.length > 0) {
+      if (!response.success) {
         await runner.rollbackTransaction();
         await runner.release();
-        return res.status(400).json(response);
+        return res.status(400).json(response.message);
+      }
+      budget.id = response.insertedId;
+      for (const item of items) {
+        item.budget = budget;
+        const responseItem = await new FreightItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
       await runner.commitTransaction();
       await runner.release();
 
-      return res.json(response);
+      return res.json(response.message);
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
@@ -118,16 +129,28 @@ export class FreightBudgetController {
       budget.destiny = destiny;
       await runner.startTransaction();
       for (const item of budget.items) {
-        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+        const responseItem = await new FreightItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
-      await runner.commitTransaction();
-      budget.items = items;
-      await runner.startTransaction();
+      budget.items = [];
       const response = await budget.update(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json(response);
+      }
+      for (const item of items) {
+        item.budget = budget.toAttributes;
+        const responseItem = await new FreightItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
       await runner.commitTransaction();
       await runner.release();
@@ -162,10 +185,13 @@ export class FreightBudgetController {
       }
       await runner.startTransaction();
       for (const item of budget.items) {
-        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+        const responseItem = await new FreightItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
-      await runner.commitTransaction();
-      await runner.startTransaction();
       const response = await budget.delete(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();

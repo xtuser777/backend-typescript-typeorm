@@ -75,16 +75,10 @@ export const FreightBudget = new EntitySchema<IFreightBudget>({
       nullable: false,
     },
     items: {
-      type: 'many-to-many',
+      type: 'one-to-many',
       target: 'freight_item',
-      joinTable: {
-        name: 'freight_budget_item',
-        joinColumn: { name: 'freight_budget_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'freight_item_id', referencedColumnName: 'id' },
-      },
-      cascade: true,
+      inverseSide: 'budget',
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
     },
   },
 });

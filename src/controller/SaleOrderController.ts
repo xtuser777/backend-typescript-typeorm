@@ -13,6 +13,14 @@ import { FreightOrder } from '../model/FreightOrder';
 import { ActiveUser } from '../util/active-user';
 import { Employee } from '../model/Employee';
 import { IEmployee } from '../entity/Employee';
+import { ISaleBudget } from '../entity/SaleBudget';
+import { IClient } from '../entity/Client';
+import { ICity } from '../entity/City';
+import { IPaymentForm } from '../entity/PaymentForm';
+import { ISaleItem } from '../entity/SaleItem';
+import { SaleItem } from '../model/SaleItem';
+import { IIndividualPerson } from '../entity/IndividualPerson';
+import { IEnterprisePerson } from '../entity/EnterprisePerson';
 
 export class SaleOrderController {
   async index(req: Request, res: Response) {
@@ -48,13 +56,13 @@ export class SaleOrderController {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('requisição sem corpo.');
     const payload = req.body;
-    const salesman = payload.order.salesman;
-    const budget = payload.order.budget;
-    const client = payload.order.client;
-    const destiny = payload.order.destiny;
-    const truckType = payload.order.truckType;
-    const paymentForm = payload.order.paymentForm;
-    const items = payload.orde.items;
+    const salesman: IEmployee | undefined = payload.order.salesman;
+    const budget: ISaleBudget | undefined = payload.order.budget;
+    const client: IClient = payload.order.client;
+    const destiny: ICity = payload.order.destiny;
+    //const truckType = payload.order.truckType;
+    const paymentForm: IPaymentForm = payload.order.paymentForm;
+    const items: ISaleItem[] = payload.order.items;
     const runner = AppDataSource.createQueryRunner();
     try {
       await runner.connect();
@@ -68,10 +76,10 @@ export class SaleOrderController {
         salesman,
         client,
         destiny,
-        truckType,
+        //truckType,
         paymentForm,
         author,
-        items,
+        items: [],
       };
       const model = new SaleOrder(order);
       await runner.startTransaction();
@@ -82,6 +90,15 @@ export class SaleOrderController {
         return res.status(400).json(response.message);
       }
       order.id = response.insertedId;
+      for (const item of items) {
+        item.order = order;
+        const responseItem = await new SaleItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
+      }
       if (salesman != undefined) {
         const salesmanComission =
           (order.value / 100) * payload.order.salesmanComissionPorcent;
@@ -94,10 +111,10 @@ export class SaleOrderController {
               : 1,
           type: 2,
           installment: 1,
-          enterprise: salesman.person.individual.name,
+          enterprise: (salesman.person.individual as IIndividualPerson).name,
           description:
             'Comissão vendedor: ' +
-            salesman.person.individual.name +
+            (salesman.person.individual as IIndividualPerson).name +
             '. Pedido: ' +
             response.insertedId,
           amount: salesmanComission,
@@ -119,8 +136,8 @@ export class SaleOrderController {
           return res.status(400).json(responseSalesmanComission.message);
         }
       }
-      for (const comission of payload.comissions) {
-        const value = (comission.value / 100) * comission.porcent;
+      for (const comission of payload.order.comissions) {
+        const value = (comission.valor / 100) * comission.porcentagem;
 
         const responseComission = await new ReceiveBill({
           id: 0,
@@ -130,7 +147,7 @@ export class SaleOrderController {
               ? ((await new ReceiveBill().find(runner)).pop() as ReceiveBill).bill + 1
               : 1,
           description: `Recebimento comissão pedido: ${response.insertedId}`,
-          payer: comission.representation.fantasyName,
+          payer: comission.representacao.nomeFantasia,
           amount: value,
           comission: true,
           situation: 1,
@@ -147,6 +164,8 @@ export class SaleOrderController {
           return res.status(400).json(responseComission);
         }
       }
+      console.log(client);
+
       const bill = new ReceiveBill({
         id: 0,
         date: new Date(Date.now()).toISOString().substring(0, 10),
@@ -157,8 +176,8 @@ export class SaleOrderController {
         description: `Recebimento pedido: ${response.insertedId}`,
         payer:
           client.person.type == 1
-            ? client.person.individual.name
-            : client.person.enterprise.fantasyName,
+            ? (client.person.individual as IIndividualPerson).name
+            : (client.person.enterprise as IEnterprisePerson).fantasyName,
         amount: order.value,
         comission: false,
         situation: 3,
@@ -279,10 +298,13 @@ export class SaleOrderController {
         }
       }
       for (const item of order.items) {
-        await runner.manager.query('delete from sale_item where id = ?', [item.id]);
+        const responseItem = await new SaleItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
-      // await runner.commitTransaction();
-      // await runner.startTransaction();
       const response = await order.delete(runner);
       if (response.length > 0) {
         await runner.rollbackTransaction();

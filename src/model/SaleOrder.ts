@@ -28,7 +28,7 @@ export class SaleOrder implements ISaleOrder {
           salesman: undefined,
           budget: undefined,
           destiny: new City(),
-          truckType: new TruckType(),
+          //truckType: new TruckType(),
           client: new Client(),
           paymentForm: new PaymentForm(),
           author: new Employee(),
@@ -92,12 +92,12 @@ export class SaleOrder implements ISaleOrder {
     this.attributes.destiny = v;
   }
 
-  get truckType(): ITruckType {
-    return this.attributes.truckType;
-  }
-  set truckType(v: ITruckType) {
-    this.attributes.truckType = v;
-  }
+  // get truckType(): ITruckType {
+  //   return this.attributes.truckType;
+  // }
+  // set truckType(v: ITruckType) {
+  //   this.attributes.truckType = v;
+  // }
 
   get client(): IClient {
     return this.attributes.client;
@@ -151,14 +151,12 @@ export class SaleOrder implements ISaleOrder {
       return { success: false, insertedId: 0, message: 'cliente inválido.' };
     if (this.attributes.destiny.id <= 0)
       return { success: false, insertedId: 0, message: 'cidade de destino inválida.' };
-    if (this.attributes.truckType.id <= 0)
-      return { success: false, insertedId: 0, message: 'tipo de caminhao inválido.' };
+    // if (this.attributes.truckType.id <= 0)
+    //   return { success: false, insertedId: 0, message: 'tipo de caminhao inválido.' };
     if (this.attributes.paymentForm.id <= 0)
       return { success: false, insertedId: 0, message: 'forma de pagamento inválida' };
     if (this.attributes.author.id <= 0)
       return { success: false, insertedId: 0, message: 'autor do cadastro inválido.' };
-    if (this.attributes.items.length == 0)
-      return { success: false, insertedId: 0, message: 'não há itens.' };
 
     try {
       const entity = await runner.manager.save(SaleOrderEntity, this.attributes);
@@ -192,7 +190,7 @@ export class SaleOrder implements ISaleOrder {
           salesman: true,
           client: true,
           destiny: { state: true },
-          truckType: true,
+          //truckType: true,
           paymentForm: true,
           author: true,
           items: {
@@ -224,7 +222,7 @@ export class SaleOrder implements ISaleOrder {
           salesman: true,
           client: true,
           destiny: { state: true },
-          truckType: true,
+          //truckType: true,
           paymentForm: true,
           author: true,
           items: {
