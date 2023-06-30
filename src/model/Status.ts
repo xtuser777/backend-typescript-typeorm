@@ -37,4 +37,16 @@ export class Status implements IStatus {
       return undefined;
     }
   }
+
+  async find(runner: QueryRunner) {
+    try {
+      const entities = await runner.manager.find(StatusEntity);
+      const statuses: Status[] = [];
+      for (const entity of entities) statuses.push(new Status(entity));
+      return statuses;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
 }

@@ -60,7 +60,6 @@ export class SaleOrderController {
     const budget: ISaleBudget | undefined = payload.order.budget;
     const client: IClient = payload.order.client;
     const destiny: ICity = payload.order.destiny;
-    //const truckType = payload.order.truckType;
     const paymentForm: IPaymentForm = payload.order.paymentForm;
     const items: ISaleItem[] = payload.order.items;
     const runner = AppDataSource.createQueryRunner();
