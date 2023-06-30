@@ -69,18 +69,29 @@ export class OrderStatus implements IOrderStatus {
   }
 
   async save(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'método inválido.';
-    if (this.attributes.date.length < 10) return 'data do status inválida.';
-    if (this.attributes.time.length < 8) return 'hora do status inválida.';
-    if (this.attributes.status.id <= 0) return 'status inválido.';
-    if (this.attributes.author.id <= 0) return 'autor do status inválido.';
+    if (this.attributes.id != 0)
+      return { success: false, insertedId: 0, message: 'método inválido.' };
+    if (this.attributes.date.length < 10)
+      return { success: false, insertedId: 0, message: 'data do status inválida.' };
+    if (this.attributes.time.length < 8)
+      return { success: false, insertedId: 0, message: 'hora do status inválida.' };
+    if (this.attributes.status.id <= 0)
+      return { success: false, insertedId: 0, message: 'status inválido.' };
+    if (this.attributes.author.id <= 0)
+      return { success: false, insertedId: 0, message: 'autor do status inválido.' };
 
     try {
       const entity = await runner.manager.save(OrderStatusEntity, this.attributes);
-      return entity ? '' : 'erro ao inserir o status do pedido.';
+      return entity
+        ? { success: true, insertedId: entity.id, message: '' }
+        : {
+            success: false,
+            insertedId: 0,
+            message: 'erro ao inserir o status do pedido.',
+          };
     } catch (e) {
       console.error(e);
-      return (e as TypeORMError).message;
+      return { success: false, insertedId: 0, message: (e as TypeORMError).message };
     }
   }
 

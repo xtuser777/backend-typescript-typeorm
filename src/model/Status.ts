@@ -1,4 +1,5 @@
-import { IStatus } from '../entity/Status';
+import { QueryRunner } from 'typeorm';
+import { IStatus, Status as StatusEntity } from '../entity/Status';
 
 export class Status implements IStatus {
   private attributes: IStatus;
@@ -19,5 +20,21 @@ export class Status implements IStatus {
   }
   set description(v: string) {
     this.attributes.description = v;
+  }
+
+  get toAttributes(): IStatus {
+    const attributes: IStatus = { ...this.attributes };
+    return attributes;
+  }
+
+  async findOne(runner: QueryRunner, id: number) {
+    if (id <= 0) return 0;
+    try {
+      const entity = await runner.manager.findOne(StatusEntity, { where: { id } });
+      return entity ? new Status(entity) : undefined;
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
   }
 }

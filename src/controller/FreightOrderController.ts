@@ -27,6 +27,9 @@ import { ReceiveBill } from '../model/ReceiveBill';
 import { ReceiveBill as ReceiveBillEntity } from '../entity/ReceiveBill';
 import { Event } from '../model/Event';
 import { FreightItem } from '../model/FreightItem';
+import { OrderStatus } from '../model/OrderStatus';
+import { Status } from '../model/Status';
+import { IStatus } from '../entity/Status';
 
 export class FreightOrderController {
   async index(req: Request, res: Response) {
@@ -73,7 +76,6 @@ export class FreightOrderController {
     const proprietary: IProprietary = payload.order.proprietary;
     const truckType: ITruckType = payload.order.truckType;
     const truck: ITruck = payload.order.truck;
-    const status: IOrderStatus = payload.order.status;
     const paymentFormFreight: IPaymentForm = payload.order.paymentFormFreight;
     const paymentFormDriver: IPaymentForm = payload.order.paymentFormDriver;
     const items: IFreightItem[] = payload.order.items;
@@ -84,6 +86,22 @@ export class FreightOrderController {
       const activeUser = ActiveUser.getInstance() as ActiveUser;
       const author = (await new Employee().findOne(runner, activeUser.getId()))
         ?.toAttributes as IEmployee;
+      await runner.startTransaction();
+      const status: IOrderStatus = {
+        id: 0,
+        date: new Date().toISOString().substring(0, 10),
+        time: new Date().toISOString().split('T')[1].substring(0, 8),
+        observation: '',
+        status: ((await new Status().findOne(runner, 1)) as Status).toAttributes,
+        author,
+      };
+      const responseStatus = await new OrderStatus(status).save(runner);
+      if (!responseStatus.success) {
+        await runner.rollbackTransaction();
+        await runner.release();
+        return res.status(400).json(responseStatus.message);
+      }
+      status.id = responseStatus.insertedId;
       const order: IFreightOrder = {
         id: 0,
         ...payload.order,
@@ -96,14 +114,13 @@ export class FreightOrderController {
         proprietary: proprietary,
         truckType: truckType,
         truck: truck,
-        status: status,
+        status,
         paymentFormFreight: paymentFormFreight,
         paymentFormDriver: paymentFormDriver,
         items: [],
         steps: [],
       };
       const model = new FreightOrder(order);
-      await runner.startTransaction();
       const response = await model.save(runner);
       if (!response.success) {
         await runner.rollbackTransaction();
