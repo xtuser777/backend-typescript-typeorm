@@ -209,8 +209,15 @@ export class ReceiveBill implements IReceiveBill {
       const entity = await runner.manager.findOne(ReceiveBillEntity, {
         where: params,
         relations: {
-          pendency: true,
-          representation: true,
+          pendency: {
+            pendency: true,
+            representation: { person: { enterprise: true } },
+            paymentForm: true,
+            saleOrder: true,
+            freightOrder: true,
+            author: { person: { individual: true } },
+          },
+          representation: { person: { enterprise: true } },
           paymentForm: true,
           saleOrder: true,
           freightOrder: true,
@@ -229,8 +236,15 @@ export class ReceiveBill implements IReceiveBill {
       const entities = await runner.manager.find(ReceiveBillEntity, {
         where: params,
         relations: {
-          pendency: true,
-          representation: true,
+          pendency: {
+            pendency: true,
+            representation: { person: { enterprise: true } },
+            paymentForm: true,
+            saleOrder: true,
+            freightOrder: true,
+            author: { person: { individual: true } },
+          },
+          representation: { person: { enterprise: true } },
           paymentForm: true,
           saleOrder: true,
           freightOrder: true,

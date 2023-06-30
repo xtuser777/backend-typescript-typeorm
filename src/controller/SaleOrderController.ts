@@ -138,7 +138,7 @@ export class SaleOrderController {
         }
       }
       for (const comission of payload.order.comissions) {
-        const value = (comission.valor / 100) * comission.porcentagem;
+        const value = (comission.porcentagem * comission.valor) / 100;
 
         const responseComission = await new ReceiveBill({
           id: 0,
@@ -167,8 +167,6 @@ export class SaleOrderController {
           return res.status(400).json(responseComission);
         }
       }
-      console.log(client);
-
       const bill = new ReceiveBill({
         id: 0,
         date: new Date(Date.now()).toISOString().substring(0, 10),
