@@ -135,14 +135,9 @@ export const FreightOrder = new EntitySchema<IFreightOrder>({
       nullable: false,
     },
     items: {
-      type: 'many-to-many',
+      type: 'one-to-many',
       target: 'freight_item',
-      joinTable: {
-        name: 'freight_order_item',
-        joinColumn: { name: 'freight_order_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'freight_item_id', referencedColumnName: 'id' },
-      },
-      cascade: true,
+      inverseSide: 'order',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },

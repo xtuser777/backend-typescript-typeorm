@@ -321,25 +321,8 @@ export class FreightOrder implements IFreightOrder {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      for (const step of this.attributes.steps)
-        await runner.manager.remove(LoadStep, step);
-      const entity0 = await runner.manager.remove(
-        PaymentFormEntity,
-        this.attributes.paymentFormFreight,
-      );
-      if (!entity0) return 'erro ao remover a forma de pagamento do frete.';
-      const entity1 = await runner.manager.remove(
-        PaymentFormEntity,
-        this.attributes.paymentFormDriver,
-      );
-      if (!entity1) return 'erro ao remover a forma de pagamento do motorista.';
-      const entity2 = await runner.manager.remove(FreightOrderEntity, this.attributes);
-      if (!entity2) return 'erro ao remover o pedido.';
-      const entity3 = await runner.manager.remove(
-        OrderStatusEntity,
-        this.attributes.status,
-      );
-      return entity3 ? '' : 'erro ao remover o status.';
+      const entity = await runner.manager.remove(FreightOrderEntity, this.attributes);
+      return entity ? '' : 'erro ao remover o pedido.';
     } catch (e) {
       console.log(e);
       return (e as TypeORMError).message;
@@ -354,7 +337,7 @@ export class FreightOrder implements IFreightOrder {
           budget: true,
           saleOrder: true,
           representation: true,
-          client: true,
+          client: { person: { individual: true, enterprise: true } },
           destiny: true,
           driver: true,
           proprietary: true,
@@ -363,7 +346,7 @@ export class FreightOrder implements IFreightOrder {
           status: { status: true },
           paymentFormFreight: true,
           paymentFormDriver: true,
-          author: true,
+          author: { person: { individual: true, enterprise: true } },
           items: {
             product: {
               representation: {
@@ -400,7 +383,7 @@ export class FreightOrder implements IFreightOrder {
           budget: true,
           saleOrder: true,
           representation: true,
-          client: true,
+          client: { person: { individual: true, enterprise: true } },
           destiny: true,
           driver: true,
           proprietary: true,
@@ -409,7 +392,7 @@ export class FreightOrder implements IFreightOrder {
           status: { status: true },
           paymentFormFreight: true,
           paymentFormDriver: true,
-          author: true,
+          author: { person: { individual: true, enterprise: true } },
           items: {
             product: {
               representation: {

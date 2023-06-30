@@ -26,6 +26,7 @@ import { BillPayCategory } from '../model/BillPayCategory';
 import { ReceiveBill } from '../model/ReceiveBill';
 import { ReceiveBill as ReceiveBillEntity } from '../entity/ReceiveBill';
 import { Event } from '../model/Event';
+import { FreightItem } from '../model/FreightItem';
 
 export class FreightOrderController {
   async index(req: Request, res: Response) {
@@ -98,7 +99,7 @@ export class FreightOrderController {
         status: status,
         paymentFormFreight: paymentFormFreight,
         paymentFormDriver: paymentFormDriver,
-        items: items,
+        items: [],
         steps: [],
       };
       const model = new FreightOrder(order);
@@ -110,6 +111,15 @@ export class FreightOrderController {
         return res.status(400).json(response.message);
       }
       order.id = response.insertedId;
+      for (const item of items) {
+        item.order = order;
+        const responseItem = await new FreightItem(item).save(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
+      }
       for (const step of steps) {
         step.order = order;
         const responseStep = await new LoadStep(step).save(runner);
@@ -272,7 +282,12 @@ export class FreightOrderController {
         }
       }
       for (const item of order.items) {
-        await runner.manager.query('delete from freight_item where id = ?', [item.id]);
+        const responseItem = await new FreightItem(item).delete(runner);
+        if (!responseItem.success) {
+          await runner.rollbackTransaction();
+          await runner.release();
+          return res.status(400).json(responseItem.message);
+        }
       }
       const proprietaryBill = await new BillPay().findOne(runner, {
         freightOrder: order.toAttributes,
