@@ -144,7 +144,7 @@ export const FreightOrder = new EntitySchema<IFreightOrder>({
     steps: {
       type: 'one-to-many',
       target: 'load_step',
-      inverseSide: 'order',
+      inverseSide: 'freightOrder',
     },
   },
 });
