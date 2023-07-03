@@ -138,7 +138,7 @@ export class FreightOrderController {
         }
       }
       for (const step of steps) {
-        step.order = order;
+        step.freightOrder = order;
         const responseStep = await new LoadStep(step).save(runner);
         if (!responseStep.success) {
           await runner.rollbackTransaction();
