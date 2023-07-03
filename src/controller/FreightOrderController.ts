@@ -29,7 +29,6 @@ import { Event } from '../model/Event';
 import { FreightItem } from '../model/FreightItem';
 import { OrderStatus } from '../model/OrderStatus';
 import { Status } from '../model/Status';
-import { IStatus } from '../entity/Status';
 
 export class FreightOrderController {
   async index(req: Request, res: Response) {
