@@ -35,7 +35,7 @@ export interface IFreightOrder {
   truck: ITruck;
   status: IOrderStatus;
   paymentFormFreight: IPaymentForm;
-  paymentFormDriver: IPaymentForm;
+  paymentFormDriver?: IPaymentForm;
   author: IEmployee;
   items: IFreightItem[];
   steps: ILoadStep[];
@@ -126,7 +126,7 @@ export const FreightOrder = new EntitySchema<IFreightOrder>({
       type: 'many-to-one',
       target: 'payment_form',
       joinColumn: { name: 'payment_form_driver_id' },
-      nullable: false,
+      nullable: true,
     },
     author: {
       type: 'many-to-one',

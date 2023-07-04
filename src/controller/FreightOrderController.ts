@@ -76,7 +76,7 @@ export class FreightOrderController {
     const truckType: ITruckType = payload.order.truckType;
     const truck: ITruck = payload.order.truck;
     const paymentFormFreight: IPaymentForm = payload.order.paymentFormFreight;
-    const paymentFormDriver: IPaymentForm = payload.order.paymentFormDriver;
+    const paymentFormDriver: IPaymentForm | undefined = payload.order.paymentFormDriver;
     const items: IFreightItem[] = payload.order.items;
     const steps: ILoadStep[] = payload.order.steps;
     const runner = AppDataSource.createQueryRunner();
@@ -118,6 +118,7 @@ export class FreightOrderController {
         paymentFormDriver: paymentFormDriver,
         items: [],
         steps: [],
+        author,
       };
       const model = new FreightOrder(order);
       const response = await model.save(runner);

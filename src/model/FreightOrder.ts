@@ -9,9 +9,9 @@ import {
   IFreightOrder,
   FreightOrder as FreightOrderEntity,
 } from '../entity/FreightOrder';
-import { ILoadStep, LoadStep } from '../entity/LoadStep';
-import { IOrderStatus, OrderStatus as OrderStatusEntity } from '../entity/OrderStatus';
-import { IPaymentForm, PaymentForm as PaymentFormEntity } from '../entity/PaymentForm';
+import { ILoadStep } from '../entity/LoadStep';
+import { IOrderStatus } from '../entity/OrderStatus';
+import { IPaymentForm } from '../entity/PaymentForm';
 import { IProprietary } from '../entity/Proprietary';
 import { IRepresentation } from '../entity/Representation';
 import { ISaleOrder } from '../entity/SaleOrder';
@@ -54,7 +54,7 @@ export class FreightOrder implements IFreightOrder {
           truck: new Truck(),
           status: new OrderStatus(),
           paymentFormFreight: new PaymentForm(),
-          paymentFormDriver: new PaymentForm(),
+          paymentFormDriver: undefined,
           author: new Employee(),
           items: [],
           steps: [],
@@ -201,10 +201,10 @@ export class FreightOrder implements IFreightOrder {
     this.attributes.paymentFormFreight = v;
   }
 
-  get paymentFormDriver(): IPaymentForm {
+  get paymentFormDriver(): IPaymentForm | undefined {
     return this.attributes.paymentFormDriver;
   }
-  set paymentFormDriver(v: IPaymentForm) {
+  set paymentFormDriver(v: IPaymentForm | undefined) {
     this.attributes.paymentFormDriver = v;
   }
 
@@ -338,7 +338,7 @@ export class FreightOrder implements IFreightOrder {
           saleOrder: true,
           representation: true,
           client: { person: { individual: true, enterprise: true } },
-          destiny: true,
+          destiny: { state: true },
           driver: true,
           proprietary: true,
           truckType: true,
