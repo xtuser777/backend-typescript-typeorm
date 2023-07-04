@@ -217,7 +217,7 @@ export class FreightOrderController {
           return res.status(400).json(responseProprietaryBillPendency.message);
         }
         proprietaryBillPendency.id = responseProprietaryBillPendency.insertedId;
-        proprietaryBill.pendency = proprietaryBillPendency;
+        proprietaryBill.pendency = proprietaryBillPendency.toAttributes;
         const responseProprietaryBillPendency1 = await proprietaryBill.update(runner);
         if (responseProprietaryBillPendency1.length > 0) {
           await runner.rollbackTransaction();

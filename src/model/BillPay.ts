@@ -230,7 +230,7 @@ export class BillPay implements IBillPay {
   }
 
   async update(runner: QueryRunner) {
-    if (this.attributes.id != 0) return 'método inválido.';
+    if (this.attributes.id <= 0) return 'método inválido.';
     if (this.attributes.date.length < 10) return 'data inválida.';
     if (this.attributes.bill < 1) return 'número de conta inválido.';
     if (this.attributes.type < 1) return 'tipo de conta inválida.';
