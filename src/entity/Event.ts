@@ -27,12 +27,14 @@ export const Event = new EntitySchema<IEvent>({
       target: 'sale_order',
       joinColumn: { name: 'sale_order_id' },
       nullable: true,
+      onDelete: 'SET NULL',
     },
     freightOrder: {
       type: 'many-to-one',
       target: 'freight_order',
       joinColumn: { name: 'freight_order_id' },
       nullable: true,
+      onDelete: 'SET NULL',
     },
     author: {
       type: 'many-to-one',

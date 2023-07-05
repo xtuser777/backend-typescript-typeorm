@@ -339,7 +339,7 @@ export class FreightOrderController {
         ?.toAttributes as IEmployee;
       const event = new Event({
         id: 0,
-        description: `O pedido de frete ${order.id} foi deletado.`,
+        description: `O pedido de frete ${id} foi deletado.`,
         date: new Date().toISOString().substring(0, 10),
         time: new Date().toISOString().split('T')[1].substring(0, 8),
         author: author,
