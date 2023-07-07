@@ -1,6 +1,5 @@
 import { ICity, City as CityEntity } from '../entity/City';
 import { IState } from '../entity/State';
-import { State } from '../model/State';
 import { AppDataSource } from '../data-source';
 
 export class City implements ICity {

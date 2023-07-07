@@ -7,7 +7,6 @@ import { IContact } from '../entity/Contact';
 import { IIndividualPerson } from '../entity/IndividualPerson';
 import { IEnterprisePerson } from '../entity/EnterprisePerson';
 import { IPerson } from '../entity/Person';
-import { IProprietary } from '../entity/Proprietary';
 import { Driver } from '../model/Driver';
 
 export class ProprietaryController {
@@ -104,32 +103,27 @@ export class ProprietaryController {
     const driver = req.body.prop.driver
       ? await new Driver().findOne(runner, req.body.prop.driver)
       : undefined;
-    proprietary.toAttributes.person.contact.phone = req.body.contact.phone;
-    proprietary.toAttributes.person.contact.cellphone = req.body.contact.cellphone;
-    proprietary.toAttributes.person.contact.email = req.body.contact.email;
-    proprietary.toAttributes.person.contact.address.street = req.body.address.street;
-    proprietary.toAttributes.person.contact.address.number = req.body.address.number;
-    proprietary.toAttributes.person.contact.address.neighborhood =
-      req.body.address.neighborhood;
-    proprietary.toAttributes.person.contact.address.complement =
-      req.body.address.complement;
-    proprietary.toAttributes.person.contact.address.code = req.body.address.code;
-    proprietary.toAttributes.person.contact.address.city = city;
-    if (proprietary.toAttributes.person.type == 1) {
-      (proprietary.toAttributes.person.individual as IIndividualPerson).name =
-        req.body.person.name;
-      (proprietary.toAttributes.person.individual as IIndividualPerson).cpf =
-        req.body.person.cpf;
-      (proprietary.toAttributes.person.individual as IIndividualPerson).birth =
-        req.body.person.birth;
+    proprietary.person.contact.phone = req.body.contact.phone;
+    proprietary.person.contact.cellphone = req.body.contact.cellphone;
+    proprietary.person.contact.email = req.body.contact.email;
+    proprietary.person.contact.address.street = req.body.address.street;
+    proprietary.person.contact.address.number = req.body.address.number;
+    proprietary.person.contact.address.neighborhood = req.body.address.neighborhood;
+    proprietary.person.contact.address.complement = req.body.address.complement;
+    proprietary.person.contact.address.code = req.body.address.code;
+    proprietary.person.contact.address.city = city;
+    if (proprietary.person.type == 1) {
+      (proprietary.person.individual as IIndividualPerson).name = req.body.person.name;
+      (proprietary.person.individual as IIndividualPerson).cpf = req.body.person.cpf;
+      (proprietary.person.individual as IIndividualPerson).birth = req.body.person.birth;
     } else {
-      (proprietary.toAttributes.person.enterprise as IEnterprisePerson).corporateName =
+      (proprietary.person.enterprise as IEnterprisePerson).corporateName =
         req.body.person.corporateName;
-      (proprietary.toAttributes.person.enterprise as IEnterprisePerson).fantasyName =
+      (proprietary.person.enterprise as IEnterprisePerson).fantasyName =
         req.body.person.fantasyName;
-      (proprietary.toAttributes.person.enterprise as IEnterprisePerson).cnpj =
-        req.body.person.cnpj;
+      (proprietary.person.enterprise as IEnterprisePerson).cnpj = req.body.person.cnpj;
     }
+    proprietary.driver = driver;
 
     await runner.startTransaction();
     const response = await proprietary.update(runner);
