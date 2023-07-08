@@ -53,6 +53,7 @@ export const BillPay = new EntitySchema<IBillPay>({
       target: 'bill_pay',
       joinColumn: { name: 'pendency_id' },
       nullable: true,
+      onDelete: 'SET NULL',
     },
     driver: {
       type: 'many-to-one',

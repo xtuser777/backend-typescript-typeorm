@@ -46,6 +46,7 @@ export const ReceiveBill = new EntitySchema<IReceiveBill>({
       target: 'receive_bill',
       joinColumn: { name: 'receive_bill_id' },
       nullable: true,
+      onDelete: 'SET NULL',
     },
     paymentForm: {
       type: 'many-to-one',
