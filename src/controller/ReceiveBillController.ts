@@ -63,12 +63,13 @@ export class ReceiveBillController {
             ? 2
             : 3
           : 1;
-      const rest =
+      let rest =
         payload.bill.amountReceived > 0
           ? payload.bill.amountReceived < amount
             ? amount - payload.bill.amountReceived
             : 0
           : 0;
+      rest = Number.parseFloat(rest.toFixed(2));
       const amountReceived = Number.parseFloat(bill.amountReceived.toString());
       if (amountReceived == 0 && payload.bill.amountReceived == 0) {
         await runner.rollbackTransaction();
@@ -89,7 +90,7 @@ export class ReceiveBillController {
           paymentForm: undefined,
         }) as ReceiveBill;
         const responsePendency = await (pendency as ReceiveBill).save(runner);
-        if (!responsePendency) {
+        if (responsePendency.length > 0) {
           await runner.rollbackTransaction();
           await runner.release();
           return res.status(400).json(responsePendency);
