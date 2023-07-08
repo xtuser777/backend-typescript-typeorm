@@ -56,6 +56,7 @@ export class ReceiveBillController {
         await runner.release();
         return res.status(400).json('conta não cadastrada.');
       }
+      const amount = Number.parseFloat(bill.amount.toString());
       const situation =
         payload.bill.amountReceived > 0
           ? payload.bill.amountReceived < bill.amount
@@ -63,12 +64,13 @@ export class ReceiveBillController {
             : 3
           : 1;
       const rest =
-        payload.amountReceived > 0
-          ? payload.bill.amountReceived < bill.amount
-            ? bill.amount - payload.bill.amountReceived
+        payload.bill.amountReceived > 0
+          ? payload.bill.amountReceived < amount
+            ? amount - payload.bill.amountReceived
             : 0
           : 0;
-      if (bill.amountReceived == 0 && payload.bill.amountReceived == 0) {
+      const amountReceived = Number.parseFloat(bill.amountReceived.toString());
+      if (amountReceived == 0 && payload.bill.amountReceived == 0) {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json('A conta ainda não foi recebida.');
@@ -79,6 +81,7 @@ export class ReceiveBillController {
         pendency = new ReceiveBill({
           ...bill.toAttributes,
           id: 0,
+          description: bill.description + ' (Pendência)',
           amount: rest,
           situation: 1,
           amountReceived: 0.0,

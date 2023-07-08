@@ -192,15 +192,17 @@ export class BillPayController {
         await runner.release();
         return res.status(400).json('conta não cadastrada.');
       }
+      const amount = Number.parseFloat(bill.amount.toString());
       const situation =
-        payload.bill.amountPaid > 0 ? (payload.bill.amountPaid < bill.amount ? 2 : 3) : 1;
+        payload.bill.amountPaid > 0 ? (payload.bill.amountPaid < amount ? 2 : 3) : 1;
       const rest =
-        payload.amountPaid > 0
-          ? payload.bill.amountPaid < bill.amount
-            ? bill.amount - payload.bill.amountPaid
+        payload.bill.amountPaid > 0
+          ? payload.bill.amountPaid < amount
+            ? amount - payload.bill.amountPaid
             : 0
           : 0;
-      if (bill.amountPaid == 0 && payload.bill.amountPaid == 0) {
+      const amountPaid = Number.parseFloat(bill.amountPaid.toString());
+      if (amountPaid == 0 && payload.bill.amountPaid == 0) {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json('A conta ainda não foi quitada.');
@@ -211,6 +213,7 @@ export class BillPayController {
         pendency = new BillPay({
           ...bill.toAttributes,
           id: 0,
+          description: bill.description + ' (Pendência)',
           amount: rest,
           situation: 1,
           amountPaid: 0.0,
