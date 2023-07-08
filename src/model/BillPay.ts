@@ -298,7 +298,7 @@ export class BillPay implements IBillPay {
           saleOrder: true,
           category: true,
           paymentForm: true,
-          author: true,
+          author: { person: { individual: true } },
         },
       });
       const bills: BillPay[] = [];
