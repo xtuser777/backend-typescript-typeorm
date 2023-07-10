@@ -80,6 +80,7 @@ export class BillPayController {
               ? 2
               : 3
             : 1,
+        installment: 1,
         pendency: pendency,
         driver: driver,
         salesman: salesman,
@@ -89,6 +90,8 @@ export class BillPayController {
         category: category,
         author: author,
       };
+      console.log(bill);
+
       await runner.startTransaction();
       const response = await new BillPay(bill).save(runner);
       if (!response.success) {
@@ -141,6 +144,7 @@ export class BillPayController {
         }
         const responseBillInstallment = await new BillPay({
           ...bill,
+          id: 0,
           installment: i + 1,
           dueDate: date.toISOString().substring(0, 10),
           situation: 1,
@@ -319,7 +323,7 @@ export class BillPayController {
         }
       } else {
         for (const installment of installments) {
-          response = await new BillPay(installment).delete(runner);
+          response = await (installment as BillPay).delete(runner);
           if (response.length > 0) {
             await runner.rollbackTransaction();
             await runner.release();
