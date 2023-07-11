@@ -218,6 +218,8 @@ export class BillPay implements IBillPay {
     if (this.attributes.author.id <= 0)
       return { success: false, insertedId: 0, message: 'autor da conta inválida.' };
 
+    console.log(this.attributes);
+
     try {
       const entity = await runner.manager.save(BillPayEntity, this.attributes);
       return entity

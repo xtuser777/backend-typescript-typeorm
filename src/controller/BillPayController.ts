@@ -90,8 +90,6 @@ export class BillPayController {
         category: category,
         author: author,
       };
-      console.log(bill);
-
       await runner.startTransaction();
       const response = await new BillPay(bill).save(runner);
       if (!response.success) {
@@ -126,19 +124,25 @@ export class BillPayController {
           return res.status(400).json(responseBillPendency);
         }
       }
-      for (let i = 1; 1 < payload.bill.installments && response.success; i++) {
-        let date = new Date();
+      let date = new Date(payload.bill.dueDate + 'T12:00:00');
+      for (let i = 1; i < payload.bill.installments && response.success; i++) {
         if (bill.type == 2) {
-          date = new Date(
-            new Date().setDate(new Date().getDate() + payload.bill.interval),
-          );
+          date = new Date(date.setDate(date.getDate() + payload.bill.interval));
         } else {
           switch (payload.bill.frequency) {
             case 1:
-              date = new Date(new Date().setMonth(new Date().getMonth() + i));
+              date = new Date(
+                new Date(payload.bill.dueDate + 'T12:00:00').setMonth(
+                  new Date(payload.bill.dueDate + 'T12:00:00').getMonth() + i,
+                ),
+              );
               break;
             case 2:
-              date = new Date(new Date().setFullYear(new Date().getFullYear() + i));
+              date = new Date(
+                new Date(payload.bill.dueDate + 'T12:00:00').setFullYear(
+                  new Date(payload.bill.dueDate + 'T12:00:00').getFullYear() + i,
+                ),
+              );
               break;
           }
         }
