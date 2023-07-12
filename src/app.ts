@@ -66,7 +66,7 @@ class App {
     // this.app.use(Helmet());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
-    this.app.use(express.static(resolve(__dirname, 'reports')));
+    this.app.use('/reports/', express.static(resolve(__dirname, '..', 'reports')));
   }
 
   private routes() {

@@ -79,7 +79,10 @@ export class LoadStepController {
       autorization.Observation();
       autorization.Message();
       autorization.Signature();
-      autorization.Output('F', `reports/AutorizacaoCarregamentoPedido.pdf`);
+      autorization.Output(
+        'F',
+        `reports/AutorizacaoCarregamentoPedido${step.freightOrder.id}Etapa${step.order}.pdf`,
+      );
       return res.json(true);
     } catch (e) {
       console.error(e);
