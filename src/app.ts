@@ -29,8 +29,10 @@ import receiveBill from './routes/receive-bill';
 import event from './routes/event';
 import status from './routes/status';
 import orderStatus from './routes/order-status';
+import loadStep from './routes/load-step';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
+import { resolve } from 'path';
 
 const whiteList = ['http://localhost:3000'];
 
@@ -64,7 +66,7 @@ class App {
     // this.app.use(Helmet());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
-    //this.app.use(express.static(resolve(__dirname, 'uploads')));
+    this.app.use(express.static(resolve(__dirname, 'reports')));
   }
 
   private routes() {
@@ -93,6 +95,7 @@ class App {
     this.app.use('/event', event);
     this.app.use('/status', status);
     this.app.use('/order-status', orderStatus);
+    this.app.use('/load-step', loadStep);
   }
 }
 

@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { IFreightOrder } from '../entity/FreightOrder';
 import { ILoadStep, LoadStep as LoadStepEntity } from '../entity/LoadStep';
 import { IRepresentation } from '../entity/Representation';
@@ -107,6 +107,62 @@ export class LoadStep implements ILoadStep {
     } catch (e) {
       console.error(e);
       return { success: false, insertedId: 0, message: (e as TypeORMError).message };
+    }
+  }
+
+  async findOne(runner: QueryRunner, params: FindOptionsWhere<ILoadStep>) {
+    try {
+      const entity = await runner.manager.findOne(LoadStepEntity, {
+        where: params,
+        relations: {
+          representation: {
+            person: { enterprise: true, contact: { address: { city: { state: true } } } },
+          },
+          freightOrder: {
+            representation: true,
+            client: {
+              person: {
+                individual: true,
+                enterprise: true,
+                contact: { address: { city: { state: true } } },
+              },
+            },
+            destiny: { state: true },
+            driver: {
+              person: {
+                individual: true,
+                enterprise: true,
+                contact: { address: { city: { state: true } } },
+              },
+            },
+            proprietary: {
+              person: {
+                individual: true,
+                enterprise: true,
+                contact: { address: { city: { state: true } } },
+              },
+            },
+            truckType: true,
+            truck: true,
+            status: { status: true },
+            items: {
+              product: {
+                representation: {
+                  person: {
+                    enterprise: true,
+                    contact: { address: { city: { state: true } } },
+                  },
+                },
+                types: true,
+              },
+            },
+          },
+        },
+      });
+      return entity ? new LoadStep(entity) : undefined;
+    } catch (e) {
+      console.error(e);
+      return undefined;
     }
   }
 }
