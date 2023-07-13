@@ -1,4 +1,4 @@
-import { QueryRunner, TypeORMError } from 'typeorm';
+import { FindOptionsWhere, QueryRunner, TypeORMError } from 'typeorm';
 import { IEmployee } from '../entity/Employee';
 import { IEvent, Event as EventEntity } from '../entity/Event';
 import { IFreightOrder } from '../entity/FreightOrder';
@@ -114,9 +114,10 @@ export class Event implements IEvent {
     }
   }
 
-  async find(runner: QueryRunner) {
+  async find(runner: QueryRunner, params?: FindOptionsWhere<IEvent>) {
     try {
       const entities = await runner.manager.find(EventEntity, {
+        where: params,
         relations: {
           saleOrder: true,
           freightOrder: true,
