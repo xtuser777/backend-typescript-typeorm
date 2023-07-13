@@ -22,7 +22,10 @@ export class LoadStepController {
         await runner.release();
         return res.status(400).json('etapa de carregamento não encontrada.');
       }
-      const orderStatus = new OrderStatus(step.freightOrder.status);
+      const orderStatus = (await new OrderStatus().findOne(
+        runner,
+        step.freightOrder.status.id,
+      )) as OrderStatus;
       step.status = payload.step.status;
       await runner.startTransaction();
       const response = await step.update(runner);
@@ -34,6 +37,12 @@ export class LoadStepController {
       orderStatus.status = (
         (await new Status().findOne(runner, 2)) as Status
       ).toAttributes;
+      orderStatus.date = new Date().toISOString().substring(0, 10);
+      orderStatus.time = new Date()
+        .toLocaleTimeString('en-US', {
+          timeZone: 'America/Sao_Paulo',
+        })
+        .substring(0, 8);
       const responseStatus = await orderStatus.update(runner);
       if (responseStatus.length > 0) {
         await runner.release();
