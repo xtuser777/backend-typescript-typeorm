@@ -29,6 +29,7 @@ import receiveBill from './routes/receive-bill';
 import event from './routes/event';
 import status from './routes/status';
 import orderStatus from './routes/order-status';
+import report from './routes/report';
 import loadStep from './routes/load-step';
 import cors from 'cors';
 import { AppDataSource } from './data-source';
@@ -96,6 +97,7 @@ class App {
     this.app.use('/status', status);
     this.app.use('/order-status', orderStatus);
     this.app.use('/load-step', loadStep);
+    this.app.use('/report', report);
   }
 }
 
