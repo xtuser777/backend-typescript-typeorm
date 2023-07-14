@@ -18,7 +18,7 @@ export class Report extends FPDF {
     const contact = `${this._parameterization.person.contact.address.street}, ${this._parameterization.person.contact.address.number} - ${this._parameterization.person.contact.address.complement} - ${this._parameterization.person.contact.phone}`;
     const document = this._parameterization.person.enterprise?.cnpj;
 
-    this.Image(resolve(__dirname, '..', '..', 'images') + '/logo.png', 9, 4, 18, 18);
+    //this.Image(resolve(__dirname, '..', '..', 'images', 'logo.png'), 9, 4, 64, 64, 'png');
 
     this.SetFont('Arial', 'B', 14);
     const w1 = this.GetStringWidth(enterprise);

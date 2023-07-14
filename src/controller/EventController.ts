@@ -185,7 +185,9 @@ export class EventController {
         .substring(0, 8);
       report.Output(
         'F',
-        `reports/RelatorioEventos${fileDate}-${time.trim().replaceAll(':', '')}.pdf`,
+        `reports/RelatorioEventos${fileDate.replaceAll('-', '')}-${time
+          .trim()
+          .replaceAll(':', '')}.pdf`,
       );
       return res.json(true);
     } catch (e) {
