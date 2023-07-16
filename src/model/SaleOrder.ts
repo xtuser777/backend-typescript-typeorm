@@ -219,7 +219,7 @@ export class SaleOrder implements ISaleOrder {
         where: params,
         relations: {
           budget: true,
-          salesman: true,
+          salesman: { person: { individual: true } },
           client: { person: { individual: true, enterprise: true } },
           destiny: { state: true },
           //truckType: true,

@@ -384,15 +384,15 @@ export class FreightOrder implements IFreightOrder {
           saleOrder: true,
           representation: true,
           client: { person: { individual: true, enterprise: true } },
-          destiny: true,
-          driver: true,
+          destiny: { state: true },
+          driver: { person: { individual: true } },
           proprietary: true,
           truckType: true,
           truck: true,
           status: { status: true },
           paymentFormFreight: true,
           paymentFormDriver: true,
-          author: { person: { individual: true, enterprise: true } },
+          author: { person: { individual: true } },
           items: {
             product: {
               representation: {
