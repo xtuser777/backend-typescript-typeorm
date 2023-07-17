@@ -111,7 +111,7 @@ export class ReceiveBillController {
       }
       bill.situation = situation;
       bill.amountReceived = payload.bill.amountReceived;
-      bill.receiveDate = payload.bill.receiveDate;
+      bill.receiveDate = amountReceived > 0 ? payload.bill.receiveDate : undefined;
       bill.pendency = pendency;
       bill.paymentForm = payload.bill.paymentForm;
       const response = await bill.update(runner);

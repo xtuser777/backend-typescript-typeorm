@@ -10,5 +10,7 @@ router.post('/freight-orders', userAuthenticated, new ReportController().freight
 router.post('/sale-budgets', userAuthenticated, new ReportController().saleBudgets);
 router.post('/freight-budgets', userAuthenticated, new ReportController().freightBudgets);
 router.post('/bills-pay', userAuthenticated, new ReportController().billsPay);
+router.post('/receive-bills', userAuthenticated, new ReportController().receiveBills);
+router.post('/products', userAuthenticated, new ReportController().products);
 
 export default router;
