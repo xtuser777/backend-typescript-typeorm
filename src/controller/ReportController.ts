@@ -1004,5 +1004,97 @@ export class ReportController {
         }
       }
     }
+    const runner = AppDataSource.createQueryRunner();
+    try {
+      await runner.connect();
+      const parameterization = (await new Parameterization().findOne(
+        runner,
+      )) as Parameterization;
+      await runner.release();
+      const report = new Report(parameterization);
+      report.ReportTitle('RELATÓRIO DE CONTAS A PAGAR', filtersList);
+
+      const col1 = 'CONTA';
+      const col2 = 'DESCRIÇÃO';
+      const col3 = 'PARCELA';
+      const col4 = 'VALOR (R$)';
+      const col5 = 'LANÇAMENTO';
+      const col6 = 'VENCIMENTO';
+      const col7 = 'PAGO (R$)';
+      const col8 = 'PAGAMENTO';
+      const col9 = 'SITUAÇÃO';
+
+      report.SetFont('Arial', 'B', 8);
+      report.SetXY(10, 40);
+      report.Cell(14, 4, col1, 'B');
+      report.Cell(95, 4, col2, 'B');
+      report.Cell(18, 4, col3, 'B');
+      report.Cell(25, 4, col4, 'B');
+      report.Cell(25, 4, col5, 'B');
+      report.Cell(25, 4, col6, 'B');
+      report.Cell(25, 4, col7, 'B');
+      report.Cell(25, 4, col8, 'B');
+      report.Cell(25, 4, col9, 'B');
+
+      let y = 46;
+      report.SetFont('Arial', '', 8);
+      for (const bill of bills) {
+        const con = bill.bill;
+        const des = bill.description;
+        const par = bill.installment;
+        const vlr = bill.amount;
+        const dat = bill.date;
+        const ven = bill.dueDate;
+        const pag = bill.amountPaid;
+        const pto = bill.paymentDate;
+        let sit = '';
+        switch (bill.situation) {
+          case 1:
+            sit = 'PENDENTE';
+            break;
+          case 2:
+            sit = 'PAGO PARC.';
+            break;
+          case 3:
+            sit = 'PAGO';
+            break;
+        }
+
+        report.SetXY(10, y);
+        report.Cell(14, 4, con);
+        report.Cell(95, 4, des);
+        report.Cell(18, 4, par);
+        report.Cell(25, 4, vlr);
+        report.Cell(25, 4, dat);
+        report.Cell(25, 4, ven);
+        report.Cell(25, 4, pag);
+        report.Cell(25, 4, pto);
+        report.Cell(25, 4, sit);
+
+        y += 6;
+        if (y == 190) {
+          y = 28;
+          report.AddPage();
+        }
+      }
+
+      const fileDate = new Date().toISOString().substring(0, 10);
+      const time = new Date()
+        .toLocaleTimeString('en-US', {
+          timeZone: 'America/Sao_Paulo',
+        })
+        .substring(0, 8);
+
+      report.Output(
+        'F',
+        `reports/RelatorioContasPagar${fileDate.replaceAll('-', '')}-${time
+          .trim()
+          .replaceAll(':', '')}.pdf`,
+      );
+      return res.json(true);
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json((e as Error).message);
+    }
   }
 }
