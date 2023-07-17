@@ -3,7 +3,6 @@ import { AppDataSource } from '../data-source';
 import { Parameterization } from '../model/Parameterization';
 import { IClient } from '../entity/Client';
 import { Report } from '../emits/Report';
-import { Client } from '../model/Client';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { IFreightOrder } from '../entity/FreightOrder';
 import { ISaleBudget } from '../entity/SaleBudget';
