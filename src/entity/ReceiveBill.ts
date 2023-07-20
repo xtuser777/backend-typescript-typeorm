@@ -36,9 +36,15 @@ export const ReceiveBill = new EntitySchema<IReceiveBill>({
     amount: { type: 'decimal', precision: 10, scale: 2, nullable: false },
     comission: { type: 'boolean', nullable: false },
     situation: { type: 'integer', nullable: false },
-    dueDate: { type: 'date', nullable: false },
-    receiveDate: { type: 'date', nullable: true },
-    amountReceived: { type: 'decimal', precision: 10, scale: 2, nullable: false },
+    dueDate: { name: 'due_date', type: 'date', nullable: false },
+    receiveDate: { name: 'receive_date', type: 'date', nullable: true },
+    amountReceived: {
+      name: 'amount_received',
+      type: 'decimal',
+      precision: 10,
+      scale: 2,
+      nullable: false,
+    },
   },
   relations: {
     pendency: {

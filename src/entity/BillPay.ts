@@ -43,9 +43,15 @@ export const BillPay = new EntitySchema<IBillPay>({
     amount: { type: 'decimal', precision: 10, scale: 2, nullable: false },
     comission: { type: 'boolean', nullable: false },
     situation: { type: 'integer', nullable: false },
-    dueDate: { type: 'date', nullable: false },
-    paymentDate: { type: 'date', nullable: true },
-    amountPaid: { type: 'decimal', precision: 10, scale: 2, nullable: false },
+    dueDate: { name: 'due_date', type: 'date', nullable: false },
+    paymentDate: { name: 'payment_date', type: 'date', nullable: true },
+    amountPaid: {
+      name: 'amount_paid',
+      type: 'decimal',
+      precision: 10,
+      scale: 2,
+      nullable: false,
+    },
   },
   relations: {
     pendency: {

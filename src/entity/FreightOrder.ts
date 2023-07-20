@@ -50,8 +50,20 @@ export const FreightOrder = new EntitySchema<IFreightOrder>({
     distance: { type: 'integer', nullable: false },
     weight: { type: 'decimal', precision: 10, scale: 2, nullable: false },
     value: { type: 'decimal', precision: 10, scale: 2, nullable: false },
-    driverValue: { type: 'decimal', precision: 10, scale: 2, nullable: false },
-    driverEntry: { type: 'decimal', precision: 10, scale: 2, nullable: false },
+    driverValue: {
+      name: 'driver_value',
+      type: 'decimal',
+      precision: 10,
+      scale: 2,
+      nullable: false,
+    },
+    driverEntry: {
+      name: 'driver_entry',
+      type: 'decimal',
+      precision: 10,
+      scale: 2,
+      nullable: false,
+    },
     shipping: { type: 'date', nullable: false },
   },
   relations: {

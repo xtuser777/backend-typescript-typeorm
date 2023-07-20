@@ -22,8 +22,8 @@ export const Truck = new EntitySchema<ITruck>({
     brand: { type: 'varchar', length: 20, nullable: false },
     model: { type: 'varchar', length: 40, nullable: false },
     color: { type: 'varchar', length: 20, nullable: false },
-    manufactureYear: { type: 'integer', nullable: false },
-    modelYear: { type: 'integer', nullable: false },
+    manufactureYear: { name: 'manufacture_year', type: 'integer', nullable: false },
+    modelYear: { name: 'model_year', type: 'integer', nullable: false },
   },
   relations: {
     type: {
