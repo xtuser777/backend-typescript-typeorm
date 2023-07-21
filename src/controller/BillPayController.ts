@@ -250,7 +250,7 @@ export class BillPayController {
       }
       bill.situation = situation;
       bill.amountPaid = payload.bill.amountPaid;
-      bill.paymentDate = payload.bill.paymentDate;
+      bill.paymentDate = amountPaid > 0 ? payload.bill.paymentDate : undefined;
       bill.pendency = pendency;
       bill.paymentForm = payload.bill.paymentForm;
       const response = await bill.update(runner);

@@ -200,7 +200,6 @@ export class SaleBudget implements ISaleBudget {
       (this.attributes.author && this.attributes.author.id == 0)
     )
       return 'autor do orçamento inválido.';
-    if (this.attributes.items.length == 0) return 'não há itens no orçamento.';
 
     try {
       const entity = await runner.manager.save(SaleBudgetEntity, this.attributes);

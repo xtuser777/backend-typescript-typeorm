@@ -94,6 +94,11 @@ export class RepresentationController {
       await runner.release();
       return res.status(400).json('representação não cadastrada.');
     }
+    (representation.person.enterprise as IEnterprisePerson).corporateName =
+      payload.person.corporateName;
+    (representation.person.enterprise as IEnterprisePerson).fantasyName =
+      payload.person.fantasyName;
+
     representation.unity = payload.representation.unity;
     representation.person.contact.phone = payload.contact.phone;
     representation.person.contact.cellphone = payload.contact.cellphone;

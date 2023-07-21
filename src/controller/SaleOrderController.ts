@@ -75,7 +75,6 @@ export class SaleOrderController {
         salesman,
         client,
         destiny,
-        //truckType,
         paymentForm,
         author,
         items: [],
@@ -241,6 +240,7 @@ export class SaleOrderController {
       await runner.startTransaction();
       const orderReceive = await new ReceiveBill().findOne(runner, {
         saleOrder: order.toAttributes,
+        comission: false,
       });
       if (orderReceive) {
         if (orderReceive.amountReceived > 0) {
@@ -281,8 +281,11 @@ export class SaleOrderController {
       }
       const comissions = await new ReceiveBill().find(runner, {
         saleOrder: order.toAttributes,
+        comission: true,
       });
       for (const comission of comissions) {
+        console.log(comission);
+
         if (comission.situation > 1) {
           await runner.rollbackTransaction();
           await runner.release();
@@ -330,7 +333,7 @@ export class SaleOrderController {
       await runner.commitTransaction();
       await runner.release();
 
-      return res.json(response);
+      return res.json('');
     } catch (e) {
       console.error(e);
       return res.status(400).json((e as TypeORMError).message);
