@@ -12,6 +12,7 @@ import { Client } from './Client';
 import { Employee } from './Employee';
 import { PaymentForm } from './PaymentForm';
 import { TruckType } from './TruckType';
+import { ResultSetHeader } from 'mysql2';
 
 export class SaleOrder implements ISaleOrder {
   private attributes: ISaleOrder;
@@ -173,8 +174,11 @@ export class SaleOrder implements ISaleOrder {
     if (this.attributes.id <= 0) return 'registro inválido';
 
     try {
-      const entity = await runner.manager.remove(SaleOrderEntity, this.attributes);
-      return entity ? '' : 'erro ao remover o pedido de venda.';
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `sale_order` WHERE `id` = ?;',
+        [this.id],
+      );
+      return entity.affectedRows > 0 ? '' : 'erro ao remover o pedido de venda.';
     } catch (e) {
       console.error(e);
       return (e as TypeORMError).message;

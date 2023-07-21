@@ -230,7 +230,7 @@ export class SaleOrderController {
         return res.status(400).json('pedido não encontrado.');
       }
       const freightOrder = await new FreightOrder().findOne(runner, {
-        saleOrder: order.toAttributes,
+        saleOrder: { id: order.id },
       });
       if (freightOrder) {
         return res
@@ -239,7 +239,7 @@ export class SaleOrderController {
       }
       await runner.startTransaction();
       const orderReceive = await new ReceiveBill().findOne(runner, {
-        saleOrder: order.toAttributes,
+        saleOrder: { id: order.id },
         comission: false,
       });
       if (orderReceive) {
@@ -268,7 +268,7 @@ export class SaleOrderController {
       }
       if (order.salesman) {
         const salesmanComission = await new BillPay().findOne(runner, {
-          saleOrder: order.toAttributes,
+          saleOrder: { id: order.id },
         });
         if (salesmanComission) {
           const responseSalesmanComission = await salesmanComission.delete(runner);
@@ -280,12 +280,10 @@ export class SaleOrderController {
         }
       }
       const comissions = await new ReceiveBill().find(runner, {
-        saleOrder: order.toAttributes,
+        saleOrder: { id: order.id },
         comission: true,
       });
       for (const comission of comissions) {
-        console.log(comission);
-
         if (comission.situation > 1) {
           await runner.rollbackTransaction();
           await runner.release();

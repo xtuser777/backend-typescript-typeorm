@@ -26,6 +26,7 @@ import { PaymentForm } from './PaymentForm';
 import { Proprietary } from './Proprietary';
 import { Truck } from './Truck';
 import { TruckType } from './TruckType';
+import { ResultSetHeader } from 'mysql2';
 
 export class FreightOrder implements IFreightOrder {
   private attributes: IFreightOrder;
@@ -321,8 +322,11 @@ export class FreightOrder implements IFreightOrder {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      const entity = await runner.manager.remove(FreightOrderEntity, this.attributes);
-      return entity ? '' : 'erro ao remover o pedido.';
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `freight_order` WHERE `id` = ?;',
+        [this.id],
+      );
+      return entity.affectedRows > 0 ? '' : 'erro ao remover o pedido.';
     } catch (e) {
       console.log(e);
       return (e as TypeORMError).message;

@@ -6,6 +6,7 @@ import { IProduct } from '../entity/Product';
 import { FreightBudget } from './FreightBudget';
 import { FreightOrder } from './FreightOrder';
 import { Product } from './Product';
+import { ResultSetHeader } from 'mysql2';
 
 export class FreightItem implements IFreightItem {
   private attributes: IFreightItem;
@@ -83,9 +84,12 @@ export class FreightItem implements IFreightItem {
 
   async delete(runner: QueryRunner) {
     try {
-      const entity = await runner.manager.remove(FreightItemEntity, this.attributes);
-      return entity
-        ? { success: true, insertedId: entity.id, message: '' }
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `freight_item` WHERE `id` = ?',
+        [this.id],
+      );
+      return entity.affectedRows > 0
+        ? { success: true, insertedId: 0, message: '' }
         : { success: false, insertedId: 0, message: 'erro ao remover o item' };
     } catch (e) {
       console.error(e);

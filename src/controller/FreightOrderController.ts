@@ -307,7 +307,7 @@ export class FreightOrderController {
         }
       }
       const proprietaryBill = await new BillPay().findOne(runner, {
-        freightOrder: order.toAttributes,
+        freightOrder: { id: order.id },
       });
       if (proprietaryBill) {
         const responseProprietaryBill = await proprietaryBill.delete(runner);
@@ -318,7 +318,7 @@ export class FreightOrderController {
         }
       }
       const orderBill = await new ReceiveBill().findOne(runner, {
-        freightOrder: order.toAttributes,
+        freightOrder: { id: order.id },
       });
       if (orderBill) {
         const responseOrderBill = await orderBill.delete(runner);

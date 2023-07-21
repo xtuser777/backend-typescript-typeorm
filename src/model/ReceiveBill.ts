@@ -6,6 +6,7 @@ import { IReceiveBill, ReceiveBill as ReceiveBillEntity } from '../entity/Receiv
 import { IRepresentation } from '../entity/Representation';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { Employee } from './Employee';
+import { ResultSetHeader } from 'mysql2';
 
 export class ReceiveBill implements IReceiveBill {
   private attributes: IReceiveBill;
@@ -196,8 +197,11 @@ export class ReceiveBill implements IReceiveBill {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      const entity = await runner.manager.remove(ReceiveBillEntity, this.attributes);
-      return entity ? '' : 'erro ao remover a conta';
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `receive_bill` WHERE `id` = ?;',
+        [this.id],
+      );
+      return entity.affectedRows > 0 ? '' : 'erro ao remover a conta';
     } catch (e) {
       console.error(e);
       return (e as TypeORMError).message;

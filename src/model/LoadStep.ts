@@ -4,6 +4,7 @@ import { ILoadStep, LoadStep as LoadStepEntity } from '../entity/LoadStep';
 import { IRepresentation } from '../entity/Representation';
 import { FreightOrder } from './FreightOrder';
 import { Representation } from './Representation';
+import { ResultSetHeader } from 'mysql2';
 
 export class LoadStep implements ILoadStep {
   private attributes: ILoadStep;
@@ -82,7 +83,7 @@ export class LoadStep implements ILoadStep {
     try {
       const entity = await runner.manager.save(LoadStepEntity, this.attributes);
       return entity
-        ? { success: true, insertedId: entity.id, message: '' }
+        ? { success: true, insertedId: 0, message: '' }
         : {
             success: false,
             insertedId: 0,
@@ -96,9 +97,12 @@ export class LoadStep implements ILoadStep {
 
   async delete(runner: QueryRunner) {
     try {
-      const entity = await runner.manager.remove(LoadStepEntity, this.attributes);
-      return entity
-        ? { success: true, insertedId: entity.id, message: '' }
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM load_step WHERE id = ?',
+        [this.id],
+      );
+      return entity.affectedRows > 0
+        ? { success: true, insertedId: 0, message: '' }
         : {
             success: false,
             insertedId: 0,

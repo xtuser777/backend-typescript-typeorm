@@ -8,6 +8,7 @@ import { Employee } from '../model/Employee';
 import { IEmployee } from '../entity/Employee';
 import { FreightOrder } from '../model/FreightOrder';
 import { Event } from '../model/Event';
+import { LoadStep } from '../model/LoadStep';
 
 export class OrderStatusController {
   async update(req: Request, res: Response) {
@@ -38,6 +39,17 @@ export class OrderStatusController {
         await runner.rollbackTransaction();
         await runner.release();
         return res.status(400).json(responseOrderStatus);
+      }
+      if (status.id == 3) {
+        for (const step of order.steps) {
+          step.status = 3;
+          const responseStep = await new LoadStep(step).update(runner);
+          if (!responseStep.success) {
+            await runner.release();
+            await runner.rollbackTransaction();
+            return res.status(400).json(responseStep.message);
+          }
+        }
       }
       const responseEvent = await new Event({
         id: 0,

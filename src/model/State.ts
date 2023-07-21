@@ -63,16 +63,17 @@ export class State implements IState {
     await runner.connect();
 
     try {
-      const entities = await runner.manager.find(StateEntity, {
-        relations: {
-          cities: true,
-        },
-      });
+      const entities: IState[] = await runner.query('SELECT * FROM state;');
 
       const states: State[] = [];
 
       for (const entity of entities) {
-        states.push(new State(entity));
+        const state = new State(entity);
+        state.cities = await runner.query(
+          'SELECT id, name FROM city WHERE state_id = ?',
+          [state.id],
+        );
+        states.push(state);
       }
 
       return states;

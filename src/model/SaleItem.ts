@@ -6,6 +6,7 @@ import { ISaleOrder } from '../entity/SaleOrder';
 import { Product } from './Product';
 import { SaleBudget } from './SaleBudget';
 import { SaleOrder } from './SaleOrder';
+import { ResultSetHeader } from 'mysql2';
 
 export class SaleItem implements ISaleItem {
   private attributes: ISaleItem;
@@ -104,9 +105,12 @@ export class SaleItem implements ISaleItem {
 
   async delete(runner: QueryRunner) {
     try {
-      const entity = await runner.manager.remove(SaleItemEntity, this.attributes);
-      return entity
-        ? { success: true, insertId: entity.id, message: '' }
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `sale_item` WHERE `id` = ?;',
+        [this.id],
+      );
+      return entity.affectedRows > 0
+        ? { success: true, insertId: 0, message: '' }
         : { success: false, insertId: 0, message: 'erro ao remover o item.' };
     } catch (e) {
       console.error(e);

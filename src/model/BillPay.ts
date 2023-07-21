@@ -8,6 +8,7 @@ import { IPaymentForm } from '../entity/PaymentForm';
 import { ISaleOrder } from '../entity/SaleOrder';
 import { BillPayCategory } from './BillPayCategory';
 import { Employee } from './Employee';
+import { ResultSetHeader } from 'mysql2';
 
 export class BillPay implements IBillPay {
   private attributes: IBillPay;
@@ -258,8 +259,11 @@ export class BillPay implements IBillPay {
     if (this.attributes.id <= 0) return 'registro inválido.';
 
     try {
-      const entity = await runner.manager.remove(BillPayEntity, this.attributes);
-      return entity ? '' : 'erro ao remover a conta';
+      const entity: ResultSetHeader = await runner.query(
+        'DELETE FROM `bill_pay` WHERE `id` = ?',
+        [this.id],
+      );
+      return entity.affectedRows > 0 ? '' : 'erro ao remover a conta';
     } catch (e) {
       console.error(e);
       return (e as TypeORMError).message;
