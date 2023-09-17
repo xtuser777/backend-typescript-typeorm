@@ -1,0 +1,22 @@
+version: "3"
+services:
+  backend-typescript-typeorm:
+    container_name: backend-typescript-typeorm
+    hostname: backend-typescript-typeorm
+    image: mysql
+    restart: always
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb_force_recovery=0
+    volumes:
+      - ~/.MySQLDBData/mysqlonly/backend-typescript-typeorm:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1756
+      MYSQL_DATABASE: scr_orm
+      MYSQL_USER: scr
+      MYSQL_PASSWORD: scr123globo
+      TZ: America/Sao_Paulo
