@@ -2,10 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Client } from '../model/Client';
 import { City } from '../model/City';
-import { IAddress } from '../entity/Address';
-import { IContact } from '../entity/Contact';
 import { IIndividualPerson } from '../entity/IndividualPerson';
-import { IPerson } from '../entity/Person';
 import { IClient } from '../entity/Client';
 import { IEnterprisePerson } from '../entity/EnterprisePerson';
 
@@ -40,32 +37,10 @@ export class ClientController {
   async store(req: Request, res: Response) {
     if (Object.keys(req.body).length == 0)
       return res.status(400).json('requisicao sem corpo.');
-    const city = ((await new City().findOne(req.body.address.city)) as City).toAttributes;
-    const address: IAddress = { id: 0, ...req.body.address, city };
-    const contact: IContact = { id: 0, ...req.body.contact, address };
-    const individual: IIndividualPerson | undefined =
-      req.body.person.type == 1
-        ? {
-            id: 0,
-            ...req.body.person,
-            contact,
-          }
-        : undefined;
-    const enterprise: IEnterprisePerson | undefined =
-      req.body.person.type == 2
-        ? {
-            id: 0,
-            ...req.body.person,
-          }
-        : undefined;
-    const person: IPerson = {
-      id: 0,
-      type: req.body.person.type,
-      individual: req.body.person.type == 1 ? individual : undefined,
-      enterprise: req.body.person.type == 2 ? enterprise : undefined,
-      contact,
-    };
-    const client: IClient = { id: 0, ...req.body.client, person };
+
+    const payload = req.body;
+
+    const client: IClient = { id: 0, ...payload.client };
     const model = new Client(client);
     const runner = AppDataSource.createQueryRunner();
     await runner.connect();

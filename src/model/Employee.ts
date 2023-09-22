@@ -7,7 +7,6 @@ import { QueryRunner, TypeORMError } from 'typeorm';
 import { IIndividualPerson, IndividualPerson } from '../entity/IndividualPerson';
 import { Address } from '../entity/Address';
 import { Contact } from '../entity/Contact';
-import { EnterprisePerson } from '../entity/EnterprisePerson';
 
 export class Employee implements IEmployee {
   private attributes!: IEmployee;

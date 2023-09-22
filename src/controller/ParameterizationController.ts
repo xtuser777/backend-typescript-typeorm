@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Parameterization } from '../model/Parameterization';
-import { City } from '../model/City';
-import { IAddress } from '../entity/Address';
-import { IContact } from '../entity/Contact';
 import { IEnterprisePerson } from '../entity/EnterprisePerson';
-import { IPerson } from '../entity/Person';
 import { IParameterization } from '../entity/Parameterization';
 
 export class ParameterizationController {
